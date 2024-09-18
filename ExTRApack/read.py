@@ -38,7 +38,7 @@ def RV_order(RV_data):
 
 #Reading out HIP data:
 
-def read_hip(path):
+def hip_read(path):
     """Returns HIP astrometric data and time for hip measurements in a tuple"""
     with open(str(path),"r") as g:
         next(g)

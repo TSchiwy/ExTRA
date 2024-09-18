@@ -132,8 +132,9 @@ def standard_model(asc,dec,parallax,mu_a_star,mu_d,t,earth,Sepoch=2457389.0,tang
     #tangential=True leaves out asc and dec and returns the position in the tangential plane
     
     t0=Sepoch
-    #t0=time of asc and dec measurement, so a standard epoch, its usually J2000, or 2451545.0JD, but
+    #t0=time of asc and dec measurement, so a standard epoch, its mostly J2000, or 2451545.0JD, but
     #for cases like Hipparchos its J1991.25, or 2448349.0625JD
+    #for gaia it is J2016, or 2456389.0
     
     
     asc_star=asc*np.cos(np.radians(dec)) #we need the RA* to calculate the final position

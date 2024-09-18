@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from .astrometry import *
 
 #This function calculates the new abscissa residual if you change a parameter compared to the hipparchos solution.
 #For example if parallax_hipparchos=40mas , parallax_model=10mas, you will get a parameter_residual=-30mas.
@@ -107,3 +108,43 @@ def plot_real(x0,x_err,y0,y_err,co="r",s=1,linecolor="lightgrey"):
 #then plots a line for each measurement in size and angle of the error    
     plt.scatter(x0,y0,color=co,s=s)
     plt.plot([x1,x2],[y1,y2],color=linecolor)
+    return
+
+
+
+
+
+
+#hipp measurements with error, t_hip is an array of the hipparchos measurement times
+#ALL INPUTS MUST BE FROM THE HIPPARCHOS CATALOGUE!
+def hip_measurement(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,A3,A4,A8,A9,tangential=1):
+    """Computes RAW 2D positions of hipparcos data given the hipparcos standard solution"""
+    
+    #asc_star=asc*np.cos(dec)#hipp catalogue gives us asc, we need asc_star for the model
+    
+    
+
+
+    
+    #this sections rotates abscissa measurements into the Dec,RA* frame.
+    d=hip_2d(A3,A4,A8,A9)
+    d=np.array(d)
+    x=d[0]
+    x_err=d[1]
+    y=d[2]
+    y_err=d[3]
+    
+    #to get the actual hipp measurement, we need to subtract the abscissa residual
+    #from the hipparchos standard model solution
+    #J1991.25, or 2448349.0625JD
+    if tangential==0:
+        
+        x_mod,y_mod=standard_model(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,Sepoch=2448349.0625,tangential=0)
+    
+        x0=x_mod-x
+        y0=y_mod-y
+    if tangential==1:
+        
+        x0=x
+        y0=y
+    return x0,x_err,y0,y_err    
