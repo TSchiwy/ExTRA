@@ -3,6 +3,11 @@
 
 It provides log-likelihood functions for both solo and combined RV/HIP fits. It can also be used to visualize Hipparcos data in 2 dimensions, as well as for creating mock RV and HIP data.
 
+The directory "ExTRA" is the package itself. Import this one into your python code.
+
+The directory "ExAMPLE" provides the "mockdata.ipynb" file, which can be used to create mock data as well as
+"tutorial.ipynb" which shows some of the most important functions in action.
+
 ---
 
 ## Data Structure
@@ -15,6 +20,7 @@ The Hipparcos IAD is generally given in columns as:
 
 - **A1** : Orbit number of Hipparcos (not important)
 - **A2** : Epoch (Year-1991.25)
+- **A5** : Parallax factor
 - **A3** : cos(θ)
 - **A4** : sin(θ)
 - **A8** : Abscissa residual [mas]
@@ -27,17 +33,22 @@ By multiplying the Epoch (A2) with A3 and A4 we get:
 
 These will be useful when recomputing proper motions later.
 
+The angle θ is the scanangle of the corresponding measurement.
+The Names of A1 to A9 were given in the tutorial for the first Hipparcos Reduction and i have decided to keep them somewhat analogue, even though they work a little different in the second Reduction.
+
 ### Reading Hipparcos Data
 
 If you want to read Hipparcos data from the second reduction, you can do so using the function:
 
 ```python
-ExTRA.hip_read("path")
+data=ExTRA.hip_read("path")
 
-which return the data in the format of:
+#which return the data in the format of:
 
 data[0]=A_3,A_4,A_5,A_6,A_7,A_8,A_9  
 data[1]=t_HIP
+```
+
 
 
 

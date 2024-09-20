@@ -292,6 +292,56 @@ def L_combined(RV_data,RV_err,t_RVs,#RV data
                v_array,#RV offsets
                correction,P,e,om,i,Om,T0,a,#gaia solution and orbital parameters
                s_RVs=0,s_hip=0):
+        """
+        Calculates the loglikelihood of a corrected gaia model with hipparcos and RV data.
+            
+
+        Parameters
+        ----------
+
+        RV_data : list of n arrays 
+        RV data [km/s]
+        n being the amount of different RV datasets
+
+        RV_err : list of n arrays
+        RV error [km/s]
+        n being the amount of different RV datasets
+
+        t_RVs: list of n arrays
+        RV times of measurement [JD]
+        n being the amount of different RV datasets
+
+
+        hip_ad : array
+            astrometric hipparcos data
+            
+        hip_stand : array
+            hipparcos standard model solution (contained in header of file mostly)
+            
+        gaia: array
+            corrected gaia standard model solution
+            one can basically put any standard model solution in here, that has standard epoch J2016.
+
+        v_array: array
+        Each offset for each RV dataset in ONE array
+
+        correction: array
+            changes made to the gaia standard model, these are 5 fit parameters
+
+        P,e,om,i,Om,T0,a : floats
+            orbital model parameters
+
+        s_RVs: array
+        jitter for each dataset
+
+        s_hip: float
+            jitter for hipparcos data
+            
+        Returns
+        -------
+        L_hip : float
+            The summed loglikelihood  *-1 -----> needs to be maximized
+         """
         
 
         
