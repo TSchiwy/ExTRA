@@ -79,7 +79,7 @@ def hip_2d(A3,A4,A8,A9): #rotates hip measurement into Dec RA* system
 #This plots the dimension hipparchos DIDNT measure in, its just nice for plots but thats it
 #inputs: x0,y0 positon of measurement,x_err,y_err error in direction,get this from hip measurement,
 #size= length of line
-def plot_not(x0,x_err,y0,y_err,size=1,co="r",s=10,linecolor="lightgrey"):
+def plot_hip(x0,x_err,y0,y_err,size=1,co="r",s=10,linecolor="lightgrey"):
 #this part just adds the rotation of the error so they can be plot in the right direction
 
     norm=1/((x_err**2 +y_err**2)**0.5)
@@ -90,6 +90,7 @@ def plot_not(x0,x_err,y0,y_err,size=1,co="r",s=10,linecolor="lightgrey"):
 #then plots a line for each measurement in size and angle of the error    
     plt.scatter(x0,y0,color=co,s=s)
     plt.plot([x1,x2],[y1,y2],color=linecolor)
+    return
     
 
 
@@ -98,7 +99,7 @@ def plot_not(x0,x_err,y0,y_err,size=1,co="r",s=10,linecolor="lightgrey"):
 
 #This plots the dimension hipparchos measured
 #inputs: x0,y0 positon of measurement,x_err,y_err error in direction,get this from hip measurement,
-def plot_real(x0,x_err,y0,y_err,co="r",s=1,linecolor="lightgrey"):
+def plot_hip_err(x0,x_err,y0,y_err,co="r",s=1,linecolor="lightgrey"):
 #this part just adds the rotation of the error so they can be plot in the right direction
 
     x1=x0-x_err

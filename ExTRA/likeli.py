@@ -78,9 +78,12 @@ def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         hip_stand : array
             hipparcos standard model solution (contained in header of file mostly)
             
-        c_gaia: array
+        gaia: array
             corrected gaia standard model solution
             one can basically put any standard model solution in here, that has standard epoch J2016.
+
+        correction:
+            changes made to the gaia standard model, these are 5 fit parameters
 
         P,e,om,i,Om,T0,a : floats
             orbital model parameters
