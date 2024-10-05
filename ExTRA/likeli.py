@@ -74,6 +74,7 @@ def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
 
         hip_ad : array
             astrometric hipparcos data
+            A3,A4,A5,A6,A7,A8,A9=hip_ad
             
         hip_stand : array
             hipparcos standard model solution (contained in header of file mostly)

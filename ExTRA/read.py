@@ -39,7 +39,7 @@ def RV_order(RV_data):
 #Reading out HIP data:
 
 def hip_read(path):
-    """Returns HIP astrometric data in an array"""
+    """Returns HIP astrometric data and time for hip measurements in a tuple"""
     with open(str(path),"r") as g:
         next(g)
         rows=[]
@@ -68,6 +68,7 @@ def hip_read(path):
 
     HIP_data=A_3,A_4,A_5,A_6,A_7,A_8,A_9
 
+    t_HIP=JD_hip(A_4,A_7)
 
-    return HIP_data
+    return HIP_data,t_HIP
 
