@@ -43,15 +43,61 @@ def loglikelihood(res,err,s): #s=jitter
 #v_array is an array  of the shifts done to each RV set
 
 #for multiple RVs, these compute the likelihood
-def L_RVs(data, err, s, v_array, K, P, e, om, T0, t):
-    v_mod=RV_solo(v_array,K,P,e,om,T0,t)
+def L_RVs(t,data, err, s, v0, K, P, e, om, T0):
+    """
+    Calculates the loglikelihood of RV data.
+        
+    Parameters
+    ----------
+    t: array
+        time of measurements
+    
+    data: array
+        RV data
+    v0:
+        offset
+    K,P,e,om,T0 : floats
+        orbital model parameters
+    s: float
+        jitter
+    
+    Returns
+    -------
+    L : float
+        The summed loglikelihood  *-1 -----> needs to be maximized
+     """
+    v_mod=RV_solo(v0,K,P,e,om,T0,t)
     RV_res=data-v_mod
     L=loglikelihood(RV_res,err,s)
     return L
 
 
-def L_RVs_comb(data,err,s,v_array,P,e,om,i,T0,a,parallax,t):
-    v_mod=RV_comb(v_array,P,e,om,i,T0,a,parallax,t)
+def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
+    """
+    Calculates the loglikelihood of RV data when combined with astrometry
+        
+    Parameters
+    ----------
+    t: array
+        time of measurements
+    
+    data: array
+        RV data
+    v0:
+        offset
+    P,e,om,i,T0,a,parallax : floats
+        orbital model parameters
+    s: float
+        jitter
+    
+        
+    Returns
+    -------
+    L : float
+        The summed loglikelihood  *-1 -----> needs to be maximized
+     """
+
+    v_mod=RV_comb(v0,P,e,om,i,T0,a,parallax,t)
     RV_res=data-v_mod
     L=loglikelihood(RV_res,err,s)
     return L
