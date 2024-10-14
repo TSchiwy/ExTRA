@@ -113,13 +113,13 @@ def standard_model(asc,dec,parallax,mu_a_star,mu_d,t,earth,Sepoch=2457389.0,tang
     asc,dec,mu_a_star,mu_d : floats
         the standard model solution for Sepoch
     t: array
-    timestamps
+        timestamps
 
     earth: array
-    position of earth at given timestamps,(use ExTRA.earth_position(t) to compute these)
+        position of earth at given timestamps,(use ExTRA.earth_position(t) to compute these)
 
     tangential: bool
-    gives tangential position if True and absolute position if false, both in [mas]
+        gives tangential position if True and absolute position if false, both in [mas]
     
     Returns:
     ----------

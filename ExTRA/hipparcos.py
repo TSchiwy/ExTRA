@@ -149,3 +149,61 @@ def hip_measurement(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,A3,A4,A8,A9,tang
         x0=x
         y0=y
     return x0,x_err,y0,y_err    
+
+
+def hip_residuals(HIP_data,hip_stand,stand_fit,orbit_fit):
+         
+        #Hipparchos
+        #First, residual due to corrections
+        A3,A4,A5,A6,A7,A8,A9=HIP_data
+        
+        hip_ad=np.array([A3,A4,A5,A6,A7])
+        
+        
+        
+        t_HIP=JD_hip(A4,A7)
+        hip_stand=np.array(hip_stand)
+        
+        #Since gaia has the values for J2016, we need to recompute asc_star and dec for year
+        #J1991 to calculate the new residuals
+        
+        
+        t_1991=2448349.0625
+        t_2016=2457389.0
+        
+        asc_91,dec_91=pos_recalc(stand_fit[0],stand_fit[1],stand_fit[2],stand_fit[3],t_2016,t_1991)
+    
+        
+
+                                        
+        
+        #The derivations in A3 compute the change for the abscissa with given asc_star! 
+        #we need to multiply the catalogue values with the cos of their respective declination.
+        asc_91_star=asc_91*np.cos(np.radians(dec_91))
+        corr1991=(asc_91_star,dec_91,stand_fit[2],stand_fit[3],stand_fit[4])
+
+        #print(corr1991)
+        
+        hip_stand[0]=hip_stand[0]*np.cos(np.radians(hip_stand[1]))
+        
+        hip_stand[1]=hip_stand[1]
+        A8=np.array(A8)
+        
+        
+                                         
+                                         
+                                         
+        #the new residuals for gaia catalogue standard parameters:
+        
+        c_res_hip=abs_res(A8,corr1991,hip_stand,hip_ad)#abs_residual=a8
+
+        #print(c_res_hip)
+        
+ 
+        #Now we have the remaining residuals, where the orbit will be fit too.
+        #To do that, we need to correct the hip residuals again, this time for an orbit:
+        x_O,y_O=orbit(orbit_fit[0],orbit_fit[1],orbit_fit[2],orbit_fit[3],orbit_fit[4],orbit_fit[5],orbit_fit[6],t_HIP)
+        
+        residuals_hip=c_res_hip-(A3*x_O+A4*y_O)
+   
+        return residuals_hip #returns res
