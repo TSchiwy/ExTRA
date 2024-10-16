@@ -164,7 +164,7 @@ def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         
         
         #calculating JD for every hip data
-        t_HIP=JD_hip(A4,A7)
+        t_HIP=hip_JD(A4,A7)
         
         #We are clculating corrections to the gaia model, but
         #Since gaia has the values for standardepoch J2016, we need to recompute asc_star and dec for year
@@ -173,9 +173,10 @@ def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         #gaia standard model solution
 
         c_gaia=stand_correct(gaia,correction)
+        #print(correction)
         asc,dec,parallax,mu_a_star,mu_d=c_gaia
         
-        #standardepochs for hip (1991) and gaia (2016) in JD
+        #standardepochs for hip (1991) and gaia DR3 (2016) in JD
         t_1991=2448349.0625
         t_2016=2457389.0
         

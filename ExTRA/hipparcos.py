@@ -20,7 +20,7 @@ def abs_res(old_res,parameter_model,parameter_hipp,hipp_derivation):
     return new_res
 
 
-def JD_hip(A4,A7): #finds JD of measurement
+def hip_JD(A4,A7): #finds JD of measurement
     frac=A7/A4
     epoch=frac+1991.25
     JD=2451545.0+(epoch-2000.0)*365.25 #JD for standard epoch J2000
@@ -161,7 +161,7 @@ def hip_residuals(HIP_data,hip_stand,stand_fit,orbit_fit):
         
         
         
-        t_HIP=JD_hip(A4,A7)
+        t_HIP=hip_JD(A4,A7)
         hip_stand=np.array(hip_stand)
         
         #Since gaia has the values for J2016, we need to recompute asc_star and dec for year

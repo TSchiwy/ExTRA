@@ -1,6 +1,6 @@
 
 import numpy as np
-from .hipparcos import JD_hip
+from .hipparcos import hip_JD
 
 
 #reading out RV data
@@ -68,7 +68,7 @@ def hip_read(path):
 
     HIP_data=A_3,A_4,A_5,A_6,A_7,A_8,A_9
 
-    t_HIP=JD_hip(A_4,A_7)
+    t_HIP=hip_JD(A_4,A_7)
 
     return HIP_data,t_HIP
 
