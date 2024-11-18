@@ -236,7 +236,7 @@ def stand_correct(stand,correction):
 
     
     Returns: array
-    corrected gaia solution in [deg,deg,mas,mas/y,mas/y]
+    corrected standard solution in [deg,deg,mas,mas/y,mas/y]
     ----------
     
     """

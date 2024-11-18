@@ -110,7 +110,7 @@ def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
 
 #This function only works for gaia models for J2016 and Hipparcos data!
 #hip_ad stands for hip "astrometric data" and hip_stand for hip "standard model solution"
-def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
+def L_hipold(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         """
         Calculates the loglikelihood of a corrected gaia model with hipparcos data.
             
@@ -159,12 +159,12 @@ def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         #Hipparchos
         #order data
         A3,A4,A5,A6,A7,A8,A9=hip_ad
-        hip_ad=np.array([A3,A4,A5,A6,A7])
+        #hip_ad=np.array([A3,A4,A5,A6,A7])
         hip_stand=np.array(hip_stand)
         
         
         #calculating JD for every hip data
-        t_HIP=hip_JD(A4,A7)
+        t_HIP=hip_JD(hip_ad)
         
         #We are clculating corrections to the gaia model, but
         #Since gaia has the values for standardepoch J2016, we need to recompute asc_star and dec for year
@@ -173,10 +173,9 @@ def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         #gaia standard model solution
 
         c_gaia=stand_correct(gaia,correction)
-        #print(correction)
         asc,dec,parallax,mu_a_star,mu_d=c_gaia
         
-        #standardepochs for hip (1991) and gaia DR3 (2016) in JD
+        #standardepochs for hip (1991) and gaia (2016) in JD
         t_1991=2448349.0625
         t_2016=2457389.0
         
@@ -227,6 +226,135 @@ def L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
 
         return L_hip
 
+
+#This function only works for standard models with given standard epoch and Hipparcos data!
+#hip_ad stands for hip "astrometric data" and hip_stand for hip "standard model solution"
+def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=2457389.0,s_hip=0):
+        """
+        Calculates the loglikelihood of a corrected gaia model with hipparcos data.
+            
+
+        Parameters
+        ----------
+
+        hip_ad : array
+            astrometric hipparcos data
+            A3,A4,A5,A6,A7,A8,A9=hip_ad
+            
+        hip_stand : array
+            hipparcos standard model solution (contained in header of file mostly)
+            
+        standard_model: array
+            standard model solution
+            one can basically put any standard model solution in here, with given standard epoch "Sepoch"
+
+        correction:
+            changes made to the gaia standard model, these are 5 fit parameters
+
+        P,e,om,i,Om,T0,a : floats
+            orbital model parameters
+
+        Sepoch: float
+            standard epoch for standard model solution
+
+
+        s_hip: float
+            jitter for hipparcos data
+            
+        Returns
+        -------
+        L_hip : float
+            The summed loglikelihood  *-1 -----> needs to be minimized
+         """
+        
+
+
+
+
+    
+        
+        
+
+
+
+
+        #Hipparchos
+        #order data
+        A3,A4,A5,A6,A7,A8,A9=hip_ad
+
+        hip_stand=np.array(hip_stand)
+
+        #calculating JD for every hip data
+
+        t_HIP=hip_JD(hip_ad)
+
+        
+        
+        
+       
+        
+        #We are clculating corrections to the gaia model, but
+        #Since gaia has the values for standardepoch J2016, we need to recompute asc_star and dec for year
+        #J1991 to calculate the new residuals
+
+        #gaia standard model solution
+
+        c_stand=stand_correct(standard_model,correction)
+        
+        asc,dec,parallax,mu_a_star,mu_d=c_stand
+        
+        #standardepochs for hip (1991) and gaia DR3 (2016) in JD
+        t_1991=2448349.0625
+        
+        
+        #pos recalc computes the new asc and dec position, we shift from 2016 to 1991
+        stand1991_asc,stand1991_dec=pos_recalc(asc,dec,mu_a_star
+                                             ,mu_d,Sepoch,t_1991)
+                                        
+        
+        #The derivations in the hip data compute the change for the abscissa with given !!asc_star!! 
+        #we need to multiply the catalogue values with the cos of their respective declination.
+        stand1991_asc_star=stand1991_asc*np.cos(np.radians(stand1991_dec))
+        hip_stand[0]=hip_stand[0]*np.cos(np.radians(hip_stand[1]))
+
+        #gaia with shifted asc_star and shifted dec to 1991
+        stand1991=np.array((stand1991_asc_star,stand1991_dec,parallax,mu_a_star,mu_d))
+        
+        
+        
+        
+                                         
+                                         
+                                         
+        
+
+        #A8 is the abs residual
+        #A8=np.array(A8)
+        #new residual due to standard model correction:
+        c_res_hip=abs_res(A8,stand1991,hip_stand,hip_ad)
+        #print(stand1991-hip_stand)
+
+        
+        
+ 
+        #Now we have the remaining residuals, where the orbital motion is still contained
+        #now we need to subtract the orbit, but in hipparcos manner
+        x_O,y_O=orbit(P,e,om,i,Om,T0,a,t_HIP)
+        
+        res_hip_final=c_res_hip-(A3*x_O+A4*y_O)
+        #we multiply the orbit positions with the respective hipparcos derivation and subtract them from
+        #the remaining residual
+        
+        
+        
+        
+        #error of hip residual
+        A9=np.array(A9)
+
+        
+        L_hip=loglikelihood(res_hip_final,A9,s_hip)
+
+        return L_hip
 
 
 

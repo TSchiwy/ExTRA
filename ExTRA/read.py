@@ -66,9 +66,9 @@ def hip_read(path):
     A_7=A_4*(HIP_epochs)
 
 
-    HIP_data=A_3,A_4,A_5,A_6,A_7,A_8,A_9
+    hip_ad=A_3,A_4,A_5,A_6,A_7,A_8,A_9
 
-    t_HIP=hip_JD(A_4,A_7)
+    t_HIP=hip_JD(hip_ad)
 
-    return HIP_data,t_HIP
+    return hip_ad,t_HIP
 

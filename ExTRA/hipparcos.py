@@ -20,14 +20,18 @@ def abs_res(old_res,parameter_model,parameter_hipp,hipp_derivation):
     return new_res
 
 
-def hip_JD(A4,A7): #finds JD of measurement
+def hip_JD(hip_ad): #finds JD of measurement
+
+    A3,A4,A5,A6,A7,A8,A9=hip_ad
     frac=A7/A4
     epoch=frac+1991.25
     JD=2451545.0+(epoch-2000.0)*365.25 #JD for standard epoch J2000
     return JD
 
 
-def scanangle_hip(A3,A4): #finds the scanangle between NORTH and RGC(reference great circle) in radians
+def scanangle_hip(hip_ad): #finds the scanangle between NORTH and RGC(reference great circle) in radians
+
+    A3,A4,A5,A6,A7,A8,A9=hip_ad
     angle=np.arctan2(A4,A3)
     angle=angle
     return angle
@@ -51,9 +55,12 @@ def rotation_counterclockwise(x,y,theta):
     
 
 
-def hip_2d(A3,A4,A8,A9): #rotates hip measurement into Dec RA* system
+def hip_2d(hip_ad): #rotates hip measurement into Dec RA* system
     """rotates a hip measurement into Ra* ,Dec, returns x,x_err,y,y_err
     
+    Parameters:
+    ----------
+    hip_ad: Hipparcos astrometric data
     
     
     
@@ -67,7 +74,9 @@ def hip_2d(A3,A4,A8,A9): #rotates hip measurement into Dec RA* system
     
     
     """
-    scanangle=scanangle_hip(A3,A4)
+
+    A3,A4,A5,A6,A7,A8,A9=hip_ad
+    scanangle=scanangle_hip(hip_ad)
     x=rotation_counterclockwise(A8,0,scanangle)[0]
     y=rotation_counterclockwise(A8,0,scanangle)[1]
     x_err=rotation_counterclockwise(A9,0,scanangle)[0]
@@ -118,8 +127,11 @@ def plot_hip_err(x0,x_err,y0,y_err,co="r",s=1,linecolor="lightgrey"):
 
 #hipp measurements with error, t_hip is an array of the hipparchos measurement times
 #ALL INPUTS MUST BE FROM THE HIPPARCHOS CATALOGUE!
-def hip_measurement(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,A3,A4,A8,A9,tangential=1):
+def hip_measurement(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,hip_ad,tangential=1):
     """Computes RAW 2D positions of hipparcos data given the hipparcos standard solution"""
+
+
+    A3,A4,A5,A6,A7,A8,A9=hip_ad
     
     #asc_star=asc*np.cos(dec)#hipp catalogue gives us asc, we need asc_star for the model
     
@@ -128,7 +140,7 @@ def hip_measurement(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,A3,A4,A8,A9,tang
 
     
     #this sections rotates abscissa measurements into the Dec,RA* frame.
-    d=hip_2d(A3,A4,A8,A9)
+    d=hip_2d(hip_ad)
     d=np.array(d)
     x=d[0]
     x_err=d[1]
@@ -151,17 +163,17 @@ def hip_measurement(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,A3,A4,A8,A9,tang
     return x0,x_err,y0,y_err    
 
 
-def hip_residuals(HIP_data,hip_stand,stand_fit,orbit_fit):
+def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
          
         #Hipparchos
         #First, residual due to corrections
-        A3,A4,A5,A6,A7,A8,A9=HIP_data
+        A3,A4,A5,A6,A7,A8,A9=hip_ad
         
         hip_ad=np.array([A3,A4,A5,A6,A7])
         
         
         
-        t_HIP=hip_JD(A4,A7)
+        t_HIP=hip_JD(hip_ad)
         hip_stand=np.array(hip_stand)
         
         #Since gaia has the values for J2016, we need to recompute asc_star and dec for year
