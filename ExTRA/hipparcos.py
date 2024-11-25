@@ -169,7 +169,7 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
         #First, residual due to corrections
         A3,A4,A5,A6,A7,A8,A9=hip_ad
         
-        hip_ad=np.array([A3,A4,A5,A6,A7])
+        #hip_ad=np.array([A3,A4,A5,A6,A7])
         
         
         
@@ -207,7 +207,7 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
                                          
         #the new residuals for gaia catalogue standard parameters:
         
-        c_res_hip=abs_res(A8,corr1991,hip_stand,hip_ad)#abs_residual=a8
+        c_res_hip=abs_res(A8,corr1991,hip_stand,hip_ad[:5])#abs_residual=a8
 
         #print(c_res_hip)
         

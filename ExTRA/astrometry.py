@@ -10,6 +10,7 @@ from astropy.coordinates import get_body_barycentric
 #calculating thiele constants
 #Output in mas
 def thiele(a,omega,Omega,i):
+    """Thiele Innes Constants"""
     
     
     #omega=omega+np.pi
@@ -23,6 +24,7 @@ def thiele(a,omega,Omega,i):
 
 @jit(nopython=True)
 def calc_E(e,M,n=30):
+    """Newton Raphson Algorythm to calculate the eccentric anomaly given the mean anomaly and the eccentricity"""
     
    
     final=np.ones(len(M))
@@ -102,7 +104,7 @@ def parallax_factors(asc,dec,pos_earth): #earth pos x,y,z, in AU #asc,dec in deg
     return p_a,p_d #parallax factors
 
 
-#TESTING
+
 def standard_model(asc,dec,parallax,mu_a_star,mu_d,t,earth,Sepoch=2457389.0,tangential=True):
 
     """
@@ -118,6 +120,9 @@ def standard_model(asc,dec,parallax,mu_a_star,mu_d,t,earth,Sepoch=2457389.0,tang
     earth: array
         position of earth at given timestamps,(use ExTRA.earth_position(t) to compute these)
 
+    Sepoch: float
+        standard epoch of input standard model
+
     tangential: bool
         gives tangential position if True and absolute position if false, both in [mas]
     
@@ -126,6 +131,9 @@ def standard_model(asc,dec,parallax,mu_a_star,mu_d,t,earth,Sepoch=2457389.0,tang
     asc_final,dec_final : Tuple,floats
         new coordinates for Epoch1 in [mas]
     """
+
+    
+    
     #give asc and deg in degree
     
     #tangential=False means total position
@@ -203,6 +211,7 @@ def pos_recalc(asc,dec,mu_a_star,mu_d,Epoch0,Epoch1):
 
 
 def secondary_mass(M_prime,parallax,P,e,i,a,unit="jup"):
+    """computes Mass of the secondary"""
 
 
 
