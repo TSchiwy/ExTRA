@@ -11,11 +11,14 @@ from .astrometry import *
 
 #the first old_residual is the hipparchos_residual given in mas
 def abs_res(old_res,parameter_model,parameter_hipp,hipp_derivation):
-    parameter_residual=parameter_model-parameter_hipp
+    parameter_residual=np.zeros(5)
+    parameter_residual[:2]=(parameter_model[:2]-parameter_hipp[:2])*3.6e6
     
+    parameter_residual[2:]=(parameter_model[2:]-parameter_hipp[2:])
+    #print(parameter_residual)
     new_res=old_res
     for i in range(5):
-        new_res-=hipp_derivation[i]*parameter_residual[i]
+        new_res=new_res-hipp_derivation[i]*parameter_residual[i]
     
     return new_res
 
@@ -197,6 +200,8 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit,Sepoch):
         #print(corr1991)
         
         hip_stand[0]=hip_stand[0]*np.cos(np.radians(hip_stand[1]))
+
+        
         
         hip_stand[1]=hip_stand[1]
         A8=np.array(A8)
@@ -220,5 +225,39 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit,Sepoch):
         x_O,y_O=orbit(orbit_fit[0],orbit_fit[1],orbit_fit[2],orbit_fit[3],orbit_fit[4],orbit_fit[5],orbit_fit[6],t_HIP)
         
         residuals_hip=c_res_hip-(A3*x_O+A4*y_O)
+
+        
    
         return residuals_hip #returns res
+
+
+
+def res_to_orbit(residuals,hip_ad,orbitfit):
+    
+     
+    #Hipparchos
+    
+
+    t=hip_JD(hip_ad)
+    res=hip_ad.copy()
+    res[-2]=residuals
+
+    
+
+    res_2D=hip_2d(res)
+
+    hip_x=res_2D[0]
+    hip_x_err=res_2D[1]
+    hip_y=res_2D[2]
+    hip_y_err=res_2D[3]
+
+    orb_x,orb_y=orbit(*orbitfit,t)
+
+    res_orb_x=hip_x+orb_x
+    res_orb_y=hip_y+orb_y
+
+    return res_orb_x,hip_x_err,res_orb_y,hip_y_err
+
+
+    
+    

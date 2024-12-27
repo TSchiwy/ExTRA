@@ -305,19 +305,25 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
         #standardepochs for hip (1991) and gaia DR3 (2016) in JD
         t_1991=2448349.0625
         
+       
         
         #pos recalc computes the new asc and dec position, we shift from 2016 to 1991
-        stand1991_asc,stand1991_dec=pos_recalc(c_stand
-                                             ,Sepoch,t_1991)
+        stand1991_asc,stand1991_dec=pos_recalc(c_stand,Sepoch,t_1991)
                                         
         
         #The derivations in the hip data compute the change for the abscissa with given !!asc_star!! 
         #we need to multiply the catalogue values with the cos of their respective declination.
         stand1991_asc_star=stand1991_asc*np.cos(np.radians(stand1991_dec))
         hip_stand[0]=hip_stand[0]*np.cos(np.radians(hip_stand[1]))
-
+        
+        
         #gaia with shifted asc_star and shifted dec to 1991
         stand1991=np.array((stand1991_asc_star,stand1991_dec,parallax,mu_a_star,mu_d))
+
+
+        #print(stand1991)
+
+        
         
         
         
@@ -349,10 +355,11 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
         
         
         
+        
         #error of hip residual
         A9=np.array(A9)
 
-        print(res_hip_final)
+        #print(res_hip_final)
         
         L_hip=loglikelihood(res_hip_final,A9,s_hip)
 
