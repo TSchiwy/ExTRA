@@ -15,7 +15,7 @@ def abs_res(old_res,parameter_model,parameter_hipp,hipp_derivation):
     
     new_res=old_res
     for i in range(5):
-        new_res=new_res-hipp_derivation[i]*parameter_residual[i]
+        new_res-=hipp_derivation[i]*parameter_residual[i]
     
     return new_res
 
@@ -163,7 +163,7 @@ def hip_measurement(asc,dec,parallax,mu_a_star,mu_d,t_HIP,earth,hip_ad,tangentia
     return x0,x_err,y0,y_err    
 
 
-def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
+def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit,Sepoch):
          
         #Hipparchos
         #First, residual due to corrections
@@ -183,7 +183,7 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
         t_1991=2448349.0625
         t_2016=2457389.0
         
-        asc_91,dec_91=pos_recalc(stand_fit[0],stand_fit[1],stand_fit[2],stand_fit[3],t_2016,t_1991)
+        asc_91,dec_91=pos_recalc(stand_fit,Sepoch,t_1991)
     
         
 
@@ -192,7 +192,7 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
         #The derivations in A3 compute the change for the abscissa with given asc_star! 
         #we need to multiply the catalogue values with the cos of their respective declination.
         asc_91_star=asc_91*np.cos(np.radians(dec_91))
-        corr1991=(asc_91_star,dec_91,stand_fit[2],stand_fit[3],stand_fit[4])
+        corr1991=np.array((asc_91_star,dec_91,stand_fit[2],stand_fit[3],stand_fit[4]))
 
         #print(corr1991)
         
@@ -200,6 +200,8 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
         
         hip_stand[1]=hip_stand[1]
         A8=np.array(A8)
+
+        #print(corr1991-hip_stand)
         
         
                                          
@@ -207,9 +209,10 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit):
                                          
         #the new residuals for gaia catalogue standard parameters:
         
-        c_res_hip=abs_res(A8,corr1991,hip_stand,hip_ad[:5])#abs_residual=a8
+        c_res_hip=abs_res(A8,corr1991,hip_stand,hip_ad)#abs_residual=a8
+    
 
-        #print(c_res_hip)
+        
         
  
         #Now we have the remaining residuals, where the orbit will be fit too.

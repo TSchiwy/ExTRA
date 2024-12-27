@@ -64,7 +64,7 @@ def L_RVs(t,data, err, s, v0, K, P, e, om, T0):
     Returns
     -------
     L : float
-        The summed loglikelihood  *-1 -----> needs to be maximized
+        The summed loglikelihood  *-1 -----> needs to be minimized
      """
     v_mod=RV_solo(v0,K,P,e,om,T0,t)
     RV_res=data-v_mod
@@ -94,7 +94,7 @@ def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
     Returns
     -------
     L : float
-        The summed loglikelihood  *-1 -----> needs to be maximized
+        The summed loglikelihood  *-1 -----> needs to be minimized
      """
 
     v_mod=RV_comb(v0,P,e,om,i,T0,a,parallax,t)
@@ -180,8 +180,7 @@ def L_hipold(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         t_2016=2457389.0
         
         #pos recalc computes the new asc and dec position, we shift from 2016 to 1991
-        gaia1991_asc,gaia1991_dec=pos_recalc(asc,dec,mu_a_star
-                                             ,mu_d,t_2016,t_1991)
+        gaia1991_asc,gaia1991_dec=pos_recalc(c_gaia,t_2016,t_1991)
                                         
         
         #The derivations in the hip data compute the change for the abscissa with given !!asc_star!! 
@@ -217,7 +216,7 @@ def L_hipold(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         
         
         
-        
+       
         #error of hip residual
         A9=np.array(A9)
 
@@ -308,8 +307,8 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
         
         
         #pos recalc computes the new asc and dec position, we shift from 2016 to 1991
-        stand1991_asc,stand1991_dec=pos_recalc(asc,dec,mu_a_star
-                                             ,mu_d,Sepoch,t_1991)
+        stand1991_asc,stand1991_dec=pos_recalc(c_stand
+                                             ,Sepoch,t_1991)
                                         
         
         #The derivations in the hip data compute the change for the abscissa with given !!asc_star!! 
@@ -331,8 +330,10 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
         #A8 is the abs residual
         #A8=np.array(A8)
         #new residual due to standard model correction:
+        
         c_res_hip=abs_res(A8,stand1991,hip_stand,hip_ad)
-        #print(stand1991-hip_stand)
+    
+        
 
         
         
@@ -351,6 +352,7 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
         #error of hip residual
         A9=np.array(A9)
 
+        print(res_hip_final)
         
         L_hip=loglikelihood(res_hip_final,A9,s_hip)
 

@@ -169,14 +169,15 @@ def standard_model(asc,dec,parallax,mu_a_star,mu_d,t,earth,Sepoch=2457389.0,tang
 
 #this function recalculates asc and dec between STANDARD EPOCHS meaning for example from J2000 to J2016.
 #epoch0 is the old and epoch1 the new epoch
-def pos_recalc(asc,dec,mu_a_star,mu_d,Epoch0,Epoch1):
+def pos_recalc(standmodel,Epoch0,Epoch1):
     """
     Recalculates the position of an object given a different standard epoch
 
     Parameters:
     ---------
-    asc,dec,mu_a_star,mu_d : floats
+    standmodel: array
         the standard model solution for Epoch0
+        given as asc,dec,parallax,mu_a_star,mu_d
     Epoch0: float [JD]
         the standard epoch for given solution, in [JD]
     Epoch1: float [JD]
@@ -187,7 +188,7 @@ def pos_recalc(asc,dec,mu_a_star,mu_d,Epoch0,Epoch1):
     asc_final,dec_final : Tuple,floats
         new coordinates for Epoch1 in [mas]
     """
-    
+    asc,dec,parallax,mu_a_star,mu_d=standmodel
     asc_star=asc*np.cos(np.radians(dec))
     
     asc_star=asc_star*(3.6e6) #convert to mas
