@@ -12,10 +12,11 @@ from .astrometry import *
 #the first old_residual is the hipparchos_residual given in mas
 def abs_res(old_res,parameter_model,parameter_hipp,hipp_derivation):
     parameter_residual=np.zeros(5)
-    parameter_residual[:2]=(parameter_model[:2]-parameter_hipp[:2])*3.6e6
+    parameter_residual[:2]=np.array((parameter_model[:2]-parameter_hipp[:2]))*(3.6e6)
     
-    parameter_residual[2:]=(parameter_model[2:]-parameter_hipp[2:])
-    #print(parameter_residual)
+    parameter_residual[2:]=np.array((parameter_model[2:]-parameter_hipp[2:]))
+
+    
     new_res=old_res
     for i in range(5):
         new_res=new_res-hipp_derivation[i]*parameter_residual[i]

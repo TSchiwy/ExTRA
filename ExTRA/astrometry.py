@@ -253,10 +253,22 @@ def stand_correct(stand,correction):
 
     new=np.zeros(5)
 
-    new[0]=stand[0]+correction[0]/(3.6e6)
+
+    
+
+    
     new[1]=stand[1]+correction[1]/(3.6e6)
     new[2]=stand[2]+correction[2]
     new[3]=stand[3]+correction[3]
     new[4]=stand[4]+correction[4]
+
+    stand_star=stand[0]*np.cos(np.radians(new[1]))
+
+    stand_star_shifted=stand_star+correction[0]/3.6e6
+
+    new[0]=stand_star_shifted/(np.cos(np.radians(new[1])))
+
+
+    
 
     return new

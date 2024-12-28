@@ -202,6 +202,7 @@ def L_hipold(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip=0):
         #A8=np.array(A8)
         #new residual due to gaia correction:
         c_res_hip=abs_res(A8,gaia1991,hip_stand,hip_ad)
+        
 
         
         
@@ -309,12 +310,15 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
         
         #pos recalc computes the new asc and dec position, we shift from 2016 to 1991
         stand1991_asc,stand1991_dec=pos_recalc(c_stand,Sepoch,t_1991)
+        #print(stand1991_asc)
                                         
         
         #The derivations in the hip data compute the change for the abscissa with given !!asc_star!! 
         #we need to multiply the catalogue values with the cos of their respective declination.
         stand1991_asc_star=stand1991_asc*np.cos(np.radians(stand1991_dec))
         hip_stand[0]=hip_stand[0]*np.cos(np.radians(hip_stand[1]))
+
+        
         
         
         #gaia with shifted asc_star and shifted dec to 1991
@@ -338,6 +342,9 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
         #new residual due to standard model correction:
         
         c_res_hip=abs_res(A8,stand1991,hip_stand,hip_ad)
+
+        #print(c_res_hip)
+    
     
         
 
