@@ -15,5 +15,6 @@ from .astrometry import *
 from .read import *
 from .likeli import *
 from .useful import *
+from .gaia import *
 
-print("ExTRA correctly imported")
+print("ExTRA  imported correctly")

@@ -10,16 +10,16 @@ from .astrometry import *
 #we will be working with the second reduction ONLY
 
 #the first old_residual is the hipparchos_residual given in mas
-def abs_res(old_res,parameter_model,parameter_hipp,hipp_derivation):
+def abs_res(old_res,parameter_fit,parameter,derivation):
     parameter_residual=np.zeros(5)
-    parameter_residual[:2]=np.array((parameter_model[:2]-parameter_hipp[:2]))*(3.6e6)
+    parameter_residual[:2]=np.array((parameter_fit[:2]-parameter[:2]))*(3.6e6)
     
-    parameter_residual[2:]=np.array((parameter_model[2:]-parameter_hipp[2:]))
+    parameter_residual[2:]=np.array((parameter_fit[2:]-parameter[2:]))
 
     
     new_res=old_res
     for i in range(5):
-        new_res=new_res-hipp_derivation[i]*parameter_residual[i]
+        new_res=new_res-derivation[i]*parameter_residual[i]
     
     return new_res
 
@@ -33,7 +33,7 @@ def hip_JD(hip_ad): #finds JD of measurement
     return JD
 
 
-def scanangle_hip(hip_ad): #finds the scanangle between NORTH and RGC(reference great circle) in radians
+def scanangle_hip(hip_ad): #finds the scanangle between EAST and RGC(reference great circle) in radians
 
     A3,A4,A5,A6,A7,A8,A9=hip_ad
     angle=np.arctan2(A4,A3)
