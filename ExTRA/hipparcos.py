@@ -12,7 +12,12 @@ from .astrometry import *
 #the first old_residual is the hipparchos_residual given in mas
 def abs_res(old_res,parameter_fit,parameter,derivation):
     parameter_residual=np.zeros(5)
-    parameter_residual[:2]=np.array((parameter_fit[:2]-parameter[:2]))*(3.6e6)
+
+    parameter_residual[0]=np.array((parameter_fit[0]-parameter[0]))*3.6e6
+    
+    parameter_residual[1]=np.array((parameter_fit[1]-parameter[1]))*3.6e6
+
+    
     
     parameter_residual[2:]=np.array((parameter_fit[2:]-parameter[2:]))
 
@@ -252,6 +257,7 @@ def res_to_orbit(residuals,hip_ad,orbitfit):
     hip_y=res_2D[2]
     hip_y_err=res_2D[3]
 
+    #print(res_2D)
     orb_x,orb_y=orbit(*orbitfit,t)
 
     res_orb_x=hip_x+orb_x

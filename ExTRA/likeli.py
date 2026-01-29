@@ -3,6 +3,10 @@ from .RVcomb import *
 from .RVsolo import *
 from .hipparcos import *
 from .astrometry import *
+from .useful import *
+from .gaia import *
+
+
 
 
 def loglikelihood(res,err,s): #s=jitter
@@ -66,7 +70,7 @@ def L_RVs(t,data, err, s, v0, K, P, e, om, T0):
     L : float
         The summed loglikelihood  *-1 -----> needs to be minimized
      """
-    v_mod=RV_solo(v0,K,P,e,om,T0,t)
+    v_mod=RV_mod(v0,K,P,e,om,T0,t)
     RV_res=data-v_mod
     L=loglikelihood(RV_res,err,s)
     return L
@@ -475,6 +479,49 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
 #     
 #        return L_hst_x+L_hst_y #return is negative loglikeli ==> max this
 
+def L_gaia(gaia_ad,gaia_stand,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
+
+    #Hipparchos
+    #order data
+    A3,A4,A5,A6,A7,A8,A9=gaia_ad
+    gaia_stand=np.array(gaia_stand)
+    #calc gaia timestamps
+    t_gaia=gaia_JD(gaia_ad)
+    
+    #A8 is the abs residual
+    #A8=np.array(A8)
+    #new residual due to standard model correction:
+    
+    c_res_gaia=abs_res(A8,correction,np.zeros(5),gaia_ad)
+
+    #print(c_res_gaia)
+    
+
+
+    
+    
+    
+
+    #Now we have the remaining residuals, where the orbital motion is still contained
+    #now we need to subtract the orbit, but in hipparcos manner
+    
+    x_O,y_O=orbit(P,e,om,i,Om,T0,a,t_gaia)
+    
+    res_gaia_final=c_res_gaia-(A3*x_O+A4*y_O)
+    #we multiply the orbit positions with the respective hipparcos derivation and subtract them from
+    #the remaining residual
+    
+    
+    
+    
+    
+    #error of hip residual
+    A9=np.array(A9)
+    
+    
+    L_gaia=loglikelihood(res_gaia_final,A9,s_gaia)
+
+    return L_gaia
 
 
 def L_combined(RV_data,RV_err,t_RVs,#RV data
