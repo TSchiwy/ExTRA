@@ -187,21 +187,21 @@ def pos_recalc(standmodel,Epoch0,Epoch1):
     Returns:
     ----------
     asc_final,dec_final : Tuple,floats
-        new coordinates for Epoch1 in [mas]
+        new coordinates for Epoch1 in [deg]
     """
     asc,dec,parallax,mu_a_star,mu_d=standmodel
-    asc_star=asc*np.cos(np.radians(dec))
     
-    asc_star=asc_star*(3.6e6) #convert to mas
+    
+    asc=asc*(3.6e6) #convert to mas
     dec=dec*(3.6e6) #convert to mas
 
 
-    a=asc_star+mu_a_star*((Epoch1-Epoch0)/365.25)
+    a=asc+mu_a_star*((Epoch1-Epoch0)/365.25)*1/np.cos(np.radians(dec))
     d=dec+mu_d*((Epoch1-Epoch0)/365.25)
         
     
     dec_final=d/(3.6e6)
-    asc_final=a/(3.6e6*np.cos(np.radians(dec_final)))
+    asc_final=a/(3.6e6)
         
     return asc_final,dec_final
 

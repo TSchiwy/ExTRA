@@ -12,6 +12,35 @@ def angle_trafo(theta):
     psi=((psi + 180) % 360) - 180
     return psi
 
+
+def gaia_init(data):
+    """transforms astrometric gaia dr4 data into HIP format
+    Input:
+    ----------
+    data    format(5,N)    [time,measurement,err,parallaxfactor,angle]
+    ----------
+    Output:
+    ----------
+    data    format(7,N)    [cos,sin,parallaxfactor,cos*t,sin*t,measurement,err]
+    """
+
+    relative_time=Time(data[0], format='jd', scale='tcb').jyear-GAIA_EPOCH.jyear
+    gaia_angle=angle_trafo(np.radians(data[-1]))
+
+    t_gaia=data[0]
+    A2=relative_time
+    A3=np.cos(gaia_angle)
+    A4=np.sin(gaia_angle)
+    A5=data[3]
+    A6=A3*A2
+    A7=A4*A2
+    A8=data[1]
+    A9=data[2]
+    transformed=[A3,A4,A5,A6,A7,A8,A9]
+
+
+    return transformed
+
 def gaia_JD(gaia_ad,Sepoch=None):
     if Sepoch==None:
         Sepoch=J2017()
