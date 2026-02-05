@@ -21,36 +21,75 @@ def thiele(a,omega,Omega,i):
     G=a*(-np.sin(omega)*np.sin(Omega)+np.cos(omega)*np.cos(Omega)*np.cos(i)) 
     return A,B,F,G
 
+#Very first implementation of the Newton Raphson, its a little slower than the new one
+#@jit(nopython=True)
+#def calc_E(e,M,n=30):
+#    """Newton Raphson Algorythm to calculate the eccentric anomaly given the mean anomaly and the eccentricity"""
+#    
+#   
+#    final=np.ones(len(M))
+#    for index, j in enumerate(M):
+#        if e<=0.8:
+#            E=j
+#        if e>0.8:
+#            E=np.pi
+#        values=np.ones(n)
+#        values[0]=E
+#        i=1
+#        while i<n:
+#            values[i]=values[i-1]-(values[i-1]-e*np.sin(values[i-1])-j)/(1-e*np.cos(values[i-1]))
+#            if abs(values[i]-values[i-1])<1e-8:
+#                values[-1]=values[i]
+#                break
+#            i=i+1
+#            if i==n:
+#                return print("error in calculating E")
+#        final[index] = values[-1]
+#    
+#    # final=np.array(final)
+#            
+#    return final
 
 @jit(nopython=True)
 def calc_E(e,M,n=30):
     """Newton Raphson Algorythm to calculate the eccentric anomaly given the mean anomaly and the eccentricity"""
     
    
-    final=np.ones(len(M))
-    for index, j in enumerate(M):
+    final=np.zeros(len(M))
+    for index, manomaly in enumerate(M):
         if e<=0.8:
-            E=j
+            E_0=manomaly
         if e>0.8:
-            E=np.pi
-        values=np.ones(n)
-        values[0]=E
-        i=1
+            E_0=np.pi
+        
+        i=0
         while i<n:
-            values[i]=values[i-1]-(values[i-1]-e*np.sin(values[i-1])-j)/(1-e*np.cos(values[i-1]))
-            if abs(values[i]-values[i-1])<1e-8:
-                values[-1]=values[i]
+            #newton-raphson
+            E_1=E_0-(E_0-e*np.sin(E_0)-manomaly)/(1-e*np.cos(E_0))
+
+
+    
+
+            #accuracy condition
+            if abs(E_1-E_0)<1e-8:
                 break
+            
+
+            #update
+            E_0=E_1
             i=i+1
+
+            #error if more than 30 tries needed
             if i==n:
                 return print("error in calculating E")
-        final[index] = values[-1]
-    
-    # final=np.array(final)
+        final[index] = E_1
             
     return final
 
+
+
 def orbit(P,e,om,i,Om,T0,a,t):
+    """"Given timestamps and Keplerian Elements, computes the positions of an object in orbit"""
     
     
     #calculating thiele constants
@@ -72,7 +111,7 @@ def orbit(P,e,om,i,Om,T0,a,t):
     
     
     
-    #to provide a right handed system and fulfill conventions, x is NORTH and y is EAST
+    
     
     return x,y
 
