@@ -484,7 +484,7 @@ def L_gaia(gaia_ad,gaia_stand,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=
     #Hipparchos
     #order data
     A3,A4,A5,A6,A7,A8,A9=gaia_ad
-    gaia_stand=np.array(gaia_stand)
+    #gaia_stand=np.array(gaia_stand)
     #calc gaia timestamps
     t_gaia=gaia_JD(gaia_ad)
     
@@ -493,6 +493,8 @@ def L_gaia(gaia_ad,gaia_stand,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=
     #new residual due to standard model correction:
     
     c_res_gaia=abs_res(A8,correction,np.zeros(5),gaia_ad)
+
+    
 
     #print(c_res_gaia)
     

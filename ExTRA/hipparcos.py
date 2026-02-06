@@ -13,9 +13,12 @@ from .astrometry import *
 def abs_res(old_res,parameter_fit,parameter,derivation):
     parameter_residual=np.zeros(5)
 
-    parameter_residual[0]=np.array((parameter_fit[0]-parameter[0]))*3.6e6
+    parameter_residual[0]=np.array((parameter_fit[0]-parameter[0]))#*3.6e6
     
-    parameter_residual[1]=np.array((parameter_fit[1]-parameter[1]))*3.6e6
+    
+    parameter_residual[1]=np.array((parameter_fit[1]-parameter[1]))#*3.6e6
+
+    #print(parameter_residual)
 
     
     
