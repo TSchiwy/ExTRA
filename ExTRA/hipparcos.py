@@ -51,6 +51,26 @@ def scanangle_hip(hip_ad): #finds the scanangle between EAST and RGC(reference g
 #the scanangle opens in the direction of RA
 
 
+def hip_with_gaia(hip_ad,hip_stand,gaia_stand,gaia_standardepoch="2017.5"):
+
+
+    GAIA_EPOCH=Time(gaia_standardepoch, format='jyear',scale="tcb").jd
+    HIP_EPOCH=Time("1991.25",format="jyear",scale="tcb").jd
+
+    gaia1991_asc,gaia1991_dec=pos_recalc(gaia_stand,GAIA_EPOCH,HIP_EPOCH)
+
+    gaia1991=np.concatenate(np.array([gaia1991_asc,gaia1991_dec]),gaia_stand[2:])
+
+    new_hip_res=abs_res(hip_ad[-2],gaia1991,hip_stand,hip_ad)
+
+    new_hip_ad=np.copy(hip_ad)
+
+    new_hip_ad[-2]=new_hip_res
+
+
+
+    return new_hip_ad
+
 
 
 ##############################################
@@ -61,7 +81,6 @@ def scanangle_hip(hip_ad): #finds the scanangle between EAST and RGC(reference g
 def rotation_counterclockwise(x,y,theta):
     x_new=+np.cos(theta)*x-np.sin(theta)*y
     y_new=+np.sin(theta)*x+np.cos(theta)*y
-    #y_new=-1*y_new
     return x_new,y_new
     
     

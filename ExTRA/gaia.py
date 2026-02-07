@@ -13,21 +13,28 @@ def angle_trafo(theta):
     return psi
 
 
-def gaia_init(data):
+def gaia_init(data,standardepoch="2017.5"):
     """transforms astrometric gaia dr4 data into HIP format
     Input:
     ----------
     data    format(5,N)    [time,measurement,err,parallaxfactor,angle]
+    ----------
+    Keys:
+    ----------
+    standardepoch   str     the epoch of the input gaia measurement, typically always 2017.5
     ----------
     Output:
     ----------
     data    format(7,N)    [cos,sin,parallaxfactor,cos*t,sin*t,measurement,err]
     """
 
+    GAIA_EPOCH=Time(standardepoch, format='jyear',scale="tcb")
+
     relative_time=Time(data[0], format='jd', scale='tcb').jyear-GAIA_EPOCH.jyear
     gaia_angle=angle_trafo(np.radians(data[-1]))
 
-    t_gaia=data[0]
+    t_gaia=data[0] #does not get returned!
+    
     A2=relative_time
     A3=np.cos(gaia_angle)
     A4=np.sin(gaia_angle)
