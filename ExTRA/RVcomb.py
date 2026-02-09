@@ -14,10 +14,17 @@ def RV_comb(v0,P,e,om,i,T0,a,parallax,t):
     K2=(P*86400*(1-e**2)**0.5)
     K=K1/K2
 
-    #i introduce a -1* in the next line so the coordinate systems aline. the Z-Axis is pointing at the observer
+    #i introduce a -1* in the next line so the coordinate systems align. the Z-Axis is pointing at the observer
     #usually this is not the case and its pointing away from the observer, but for astrometry its pointing towards
     
-    v_r=-1*(K*(np.cos(f+om)+e*np.cos(om))+v0)
-    #v_r=1*(K*(np.cos(f+om)+e*np.cos(om))+v0)
+    #v_r=-1*(K*(np.cos(f+om)+e*np.cos(om))+v0)
+    v_r=1*(K*(np.cos(f+om)+e*np.cos(om))+v0)
 
     return v_r
+
+
+def K(P,e,i,a,parallax):
+    K1=2*np.pi*a*np.sin(i)*1.495978707e11/(parallax)
+    K2=(P*86400*(1-e**2)**0.5)
+    K=K1/K2
+    return K

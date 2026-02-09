@@ -53,11 +53,9 @@ def L_RVs(t,data, err, s, v0, K, P, e, om, T0):
         
     Parameters
     ----------
-    t: array
-        time of measurements
+    t: array    time of measurements
     
-    data: array
-        RV data
+    data: array RV data
     v0:
         offset
     K,P,e,om,T0 : floats
@@ -82,17 +80,12 @@ def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
         
     Parameters
     ----------
-    t: array
-        time of measurements
+    t: array    time of measurements
     
-    data: array
-        RV data
-    v0:
-        offset
-    P,e,om,i,T0,a,parallax : floats
-        orbital model parameters
-    s: float
-        jitter
+    data: array     RV data
+    v0:   array    offset
+    P,e,om,i,T0,a,parallax : floats orbital model parameters
+    s: float    jitter
     
         
     Returns
@@ -589,7 +582,8 @@ def L_combined(RV_data,RV_err,t_RVs,#RV data
         parallax=gaia[2]+correction[2]
         
      
-        Lrv=L_RVs_comb(RV_data,RV_err,s_RVs,v_array,P,e,om,i,T0,a,parallax,t_RVs)
+        Lrv=L_RVs_comb(t_RVs,RV_data,RV_err,s_RVs,v_array,P,e,om,i,T0,a,parallax)
+    
 
         
         Lhip=L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip)
