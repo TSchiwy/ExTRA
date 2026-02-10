@@ -28,3 +28,29 @@ def K(P,e,i,a,parallax):
     K2=(P*86400*(1-e**2)**0.5)
     K=K1/K2
     return K
+
+
+def TfromM(P,M): #M(t)=n⋅(t−Tp​) , n=  2pi /P
+    T=M*P/(2*np.pi)
+    return T+2500000 #in JD
+
+def alpha_max(K1, P, e, i): #computing a in mas from the RV solution 
+    """
+    Computes the maximum astrometric signal (alpha_max) using radial velocity amplitude.
+    
+    Parameters:
+        K1 (float): Radial velocity semi-amplitude (in m/s).
+        P (float): Orbital period (in days).
+        e (float): Orbital eccentricity.
+        i (float): Orbital inclination (in degrees).
+    
+    Returns:
+        float: Maximum astrometric signal (alpha_max) in m
+    """
+    
+
+    
+    # Compute alpha_max
+    alpha_max_value = (K1 * P  * 86400 * np.sqrt(1 - e**2)) / (2 * np.pi * np.sin(i)*1.496e11)
+    
+    return alpha_max_value
