@@ -31,9 +31,9 @@ def gaia_init(data,standardepoch="2017.5"):
     GAIA_EPOCH=Time(standardepoch, format='jyear',scale="tcb")
 
     relative_time=Time(data[0], format='jd', scale='tcb').jyear-GAIA_EPOCH.jyear
-    gaia_angle=angle_trafo(np.radians(data[-1]))
+    gaia_angle=angle_trafo(np.radians(data[4]))
 
-    t_gaia=data[0] #does not get returned!
+    t_gaia=data[0] #gets returned seperatly, not important for fitting
     
     A2=relative_time
     A3=np.cos(gaia_angle)
@@ -46,7 +46,7 @@ def gaia_init(data,standardepoch="2017.5"):
     transformed=[A3,A4,A5,A6,A7,A8,A9]
 
 
-    return transformed
+    return transformed,t_gaia
 
 def gaia_JD(gaia_ad,Sepoch=None):
     if Sepoch==None:
