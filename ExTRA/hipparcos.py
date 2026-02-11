@@ -31,6 +31,8 @@ def abs_res(old_res,parameter_fit,parameter,derivation):
     
     return new_res
 
+    
+
 
 def hip_JD(hip_ad): #finds JD of measurement
 
@@ -41,7 +43,7 @@ def hip_JD(hip_ad): #finds JD of measurement
     return JD
 
 
-def scanangle_hip(hip_ad): #finds the scanangle between EAST and RGC(reference great circle) in radians
+def scanangle(hip_ad): #finds the scanangle between EAST and RGC(reference great circle) in radians
 
     A3,A4,A5,A6,A7,A8,A9=hip_ad
     angle=np.arctan2(A4,A3)
@@ -59,7 +61,9 @@ def hip_with_gaia(hip_ad,hip_stand,gaia_stand,gaia_standardepoch="2017.5"):
 
     gaia1991_asc,gaia1991_dec=pos_recalc(gaia_stand,GAIA_EPOCH,HIP_EPOCH)
 
-    gaia1991=np.concatenate(np.array([gaia1991_asc,gaia1991_dec]),gaia_stand[2:])
+    gaia1991=np.copy(gaia_stand)
+    gaia1991[0]=gaia1991_asc
+    gaia1991[1]=gaia1991_dec
 
     new_hip_res=abs_res(hip_ad[-2],gaia1991,hip_stand,hip_ad)
 
@@ -107,11 +111,11 @@ def hip_2d(hip_ad): #rotates hip measurement into Dec RA* system
     """
 
     A3,A4,A5,A6,A7,A8,A9=hip_ad
-    scanangle=scanangle_hip(hip_ad)
-    x=rotation_counterclockwise(A8,0,scanangle)[0]
-    y=rotation_counterclockwise(A8,0,scanangle)[1]
-    x_err=rotation_counterclockwise(A9,0,scanangle)[0]
-    y_err=rotation_counterclockwise(A9,0,scanangle)[1]
+    angle=scanangle(hip_ad)
+    x=rotation_counterclockwise(A8,0,angle)[0]
+    y=rotation_counterclockwise(A8,0,angle)[1]
+    x_err=rotation_counterclockwise(A9,0,angle)[0]
+    y_err=rotation_counterclockwise(A9,0,angle)[1]
     #print(np.degrees(scanangle))
     return np.array([x,x_err,y,y_err])
 
