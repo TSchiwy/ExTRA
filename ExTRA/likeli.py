@@ -108,7 +108,7 @@ def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
 
 #This function only works for standard models with given standard epoch and Hipparcos data!
 #hip_ad stands for hip "astrometric data" and hip_stand for hip "standard model solution"
-def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=2457389.0,s_hip=0):
+def L_hip_old(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=2457389.0,s_hip=0):
         """
         Calculates the loglikelihood of a corrected gaia model with hipparcos data.
             
@@ -254,7 +254,7 @@ def L_hip(hip_ad,hip_stand,standard_model,correction,P,e,om,i,Om,T0,a,Sepoch=245
 
 #This function only works for standard models with given standard epoch and Hipparcos data!
 #hip_ad stands for hip "astrometric data" and hip_stand for hip "standard model solution"
-def L_hip_new(hip_ad,correction,P,e,om,i,Om,T0,a,s_hip=0):
+def L_hip(hip_ad,correction,P,e,om,i,Om,T0,a,s_hip=0):
         """
         Calculates the loglikelihood of a corrected gaia model with hipparcos data.
             
