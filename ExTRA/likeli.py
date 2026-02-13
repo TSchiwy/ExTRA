@@ -413,7 +413,7 @@ def L_hip(hip_ad,correction,P,e,om,i,Om,T0,a,s_hip=0):
 #     
 #        return L_hst_x+L_hst_y #return is negative loglikeli ==> max this
 
-def L_gaia(gaia_ad,gaia_stand,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
+def L_gaia(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
 
     #Hipparchos
     #order data
