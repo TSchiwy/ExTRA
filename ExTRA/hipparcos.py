@@ -66,7 +66,7 @@ def hip_with_gaia(hip_ad,hip_stand,gaia_stand,gaia_standardepoch="2017.5"):
     gaia1991[1]=gaia1991_dec
 
     new_hip_res=abs_res(hip_ad[-2],gaia1991,hip_stand,hip_ad)
-
+    
     new_hip_ad=np.copy(hip_ad)
 
     new_hip_ad[-2]=new_hip_res
