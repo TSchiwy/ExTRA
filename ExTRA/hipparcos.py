@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from .astrometry import *
+from .useful import *
 
 #This function calculates the new abscissa residual if you change a parameter compared to the hipparchos solution.
 #For example if parallax_hipparchos=40mas , parallax_model=10mas, you will get a parameter_residual=-30mas.
@@ -34,12 +35,13 @@ def abs_res(old_res,parameter_fit,parameter,derivation):
     
 
 
-def hip_JD(hip_ad): #finds JD of measurement
-
+def hip_JD(hip_ad,Sepoch=None): #finds JD of measurement
+    if Sepoch==None:
+        Sepoch=J1991()
     A3,A4,A5,A6,A7,A8,A9=hip_ad
     frac=A7/A4
     epoch=frac+1991.25
-    JD=2451545.0+(epoch-2000.0)*365.25 #JD for standard epoch J2000
+    JD=Sepoch+(epoch-1991.25)*365.25 #JD for standard epoch J1991
     return JD
 
 

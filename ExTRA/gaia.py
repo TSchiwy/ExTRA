@@ -54,7 +54,7 @@ def gaia_JD(gaia_ad,Sepoch=None):
     A3,A4,A5,A6,A7,A8,A9=gaia_ad
     frac=A7/A4
     epoch=frac+2017.5
-    JD=J2017()+(epoch-2017.5)*365.25 #JD for standard epoch J2017.5
+    JD=Sepoch+(epoch-2017.5)*365.25 #JD for standard epoch J2017.5
     return JD
 
 
