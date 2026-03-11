@@ -14,7 +14,7 @@ from .hipparcos import *
 from .astrometry import *
 from .read import *
 from .likeli import *
-
+from .vectorastrometry import *
 from .gaia import *
 
 print("ExTRA  imported correctly")

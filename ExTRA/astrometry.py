@@ -21,35 +21,6 @@ def thiele(a,omega,Omega,i):
     G=a*(-np.sin(omega)*np.sin(Omega)+np.cos(omega)*np.cos(Omega)*np.cos(i)) 
     return A,B,F,G
 
-#Very first implementation of the Newton Raphson, its a little slower than the new one
-#@jit(nopython=True)
-#def calc_E(e,M,n=30):
-#    """Newton Raphson Algorythm to calculate the eccentric anomaly given the mean anomaly and the eccentricity"""
-#    
-#   
-#    final=np.ones(len(M))
-#    for index, j in enumerate(M):
-#        if e<=0.8:
-#            E=j
-#        if e>0.8:
-#            E=np.pi
-#        values=np.ones(n)
-#        values[0]=E
-#        i=1
-#        while i<n:
-#            values[i]=values[i-1]-(values[i-1]-e*np.sin(values[i-1])-j)/(1-e*np.cos(values[i-1]))
-#            if abs(values[i]-values[i-1])<1e-8:
-#                values[-1]=values[i]
-#                break
-#            i=i+1
-#            if i==n:
-#                return print("error in calculating E")
-#        final[index] = values[-1]
-#    
-#    # final=np.array(final)
-#            
-#    return final
-
 @jit(nopython=True)
 def calc_E(e,M,n=30):
     """Newton Raphson Algorythm to calculate the eccentric anomaly given the mean anomaly and the eccentricity"""
@@ -293,18 +264,10 @@ def stand_correct(stand,correction):
 
     new=np.zeros(5)
 
-
-    
-
     new[0]=stand[0]+correction[0]/(np.cos(np.radians((stand[1])))*3.6e6)
     new[1]=stand[1]+correction[1]/(3.6e6)
     new[2]=stand[2]+correction[2]
     new[3]=stand[3]+correction[3]
     new[4]=stand[4]+correction[4]
-
-    
-
-
-    
 
     return new

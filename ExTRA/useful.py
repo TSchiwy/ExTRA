@@ -15,3 +15,16 @@ def J2017(): #this is J2017.5 as in gaia dr4
 def jitter_estimate(residuals,err):
     s=np.mean(abs((residuals**2 -err**2 ))**0.5)
     return s
+
+
+# Astronomical Unit in meter, IAU constant and defining length
+au_in_meter = 149597870700.0
+
+# AU expressed in mas*pc or muas*kpc
+au_mas_parsec = 1000.0
+
+# Number of seconds in Julian year
+julian_year_seconds = 365.25 * 86400.0
+
+# AU expressed in km*yr/s
+au_km_year_per_sec = au_in_meter / (julian_year_seconds * 1000.0)
