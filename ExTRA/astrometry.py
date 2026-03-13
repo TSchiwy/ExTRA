@@ -178,6 +178,76 @@ def standard_model(asc,dec,parallax,mu_a_star,mu_d,t,earth,Sepoch=2457389.0,tang
     
     return a,d #in mas
 
+
+def sss_model(sss,t,Sepoch=2457389.0,tangential=True):
+
+    """
+    Calculates the position of an object in respect to a standard epoch
+
+    Parameters:
+    ---------
+    sss: single star solution, array length 5,7 or 9
+    t: array
+        timestamps
+
+    earth: array
+        position of earth at given timestamps,(use ExTRA.earth_position(t) to compute these)
+
+    Sepoch: float
+        standard epoch of input standard model
+
+    tangential: bool
+        gives tangential position if True and absolute position if false, both in [mas]
+    
+    Returns:
+    ----------
+    asc_final,dec_final : Tuple,floats
+        new coordinates for Epoch1 in [mas]
+    """
+
+    
+    
+    #give asc and deg in degree
+    
+    #tangential=False means total position
+    #tangential=True leaves out asc and dec and returns the position in the tangential plane
+    
+    t0=Sepoch
+    dif=((t-t0)/365.25)
+    earth=earth_position(t)
+    #t0=time of asc and dec measurement, so a standard epoch, its mostly J2000, or 2451545.0JD, but
+    #for cases like Hipparchos its J1991.25, or 2448349.0625JD
+    #for gaia it is J2016, or 2456389.0
+    
+    
+    n=len(sss)
+
+    asc,dec=sss[:2]
+    
+    p_a,p_d=parallax_factors(asc,dec,earth)
+    if n==5:
+        asc,dec,parallax,mu_a,mu_d=sss
+        a=p_a*parallax+mu_a*dif
+        d=p_d*parallax+mu_d*dif
+    if n==7:
+        asc,dec,parallax,mu_a,mu_d,d_mu_a,d_mu_d=sss
+        a=p_a*parallax+mu_a*dif+d_mu_a*dif*abs(dif)
+        d=p_d*parallax+mu_d*dif+d_mu_d*dif*abs(dif)
+    if n==9:
+        asc,dec,parallax,mu_a,mu_d,d_mu_a,d_mu_d,dd_mu_a,dd_mu_d=sss
+        a=p_a*parallax+mu_a*dif+d_mu_a*dif*abs(dif)+dd_mu_a*dif**3
+        d=p_d*parallax+mu_d*dif+d_mu_d*dif*abs(dif)+dd_mu_d*dif**3
+    
+    if not tangential:
+        asc=asc*(3.6e6) #convert to mas
+        dec=dec*(3.6e6) #convert to mas
+
+        a=a/np.cos(np.radians(dec)) +asc
+        d=d+dec
+        
+    
+    return a,d #in mas
+
 #this function recalculates asc and dec between STANDARD EPOCHS meaning for example from J2000 to J2016.
 #epoch0 is the old and epoch1 the new epoch
 def pos_recalc(standmodel,Epoch0,Epoch1):

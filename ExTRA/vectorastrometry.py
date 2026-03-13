@@ -1,6 +1,10 @@
 """
 Provides vector astrometry functions.
 """
+#Thank you Anthony Brown from Leiden University for letting me copy this code to safe some work
+
+
+
 import numpy as np
 from .useful import au_mas_parsec, au_km_year_per_sec
 
@@ -11,6 +15,7 @@ __all__ = [
     "elementary_rotation_matrix",
     "phase_space_to_astrometry",
     "astrometry_to_phase_space",
+    "EpochPropagation"
 ]
 
 
