@@ -85,6 +85,7 @@ def cartesian_to_spherical(x, y, z):
         raise ValueError("Error: one or more of the input points is at distance zero.")
     phi = np.arctan2(y, x)
     phi = np.where(phi < 0.0, phi + 2 * np.pi, phi)
+    phi=np.float64(phi)
     return r, phi, np.arctan2(z, np.sqrt(rCylSq))
 
 
