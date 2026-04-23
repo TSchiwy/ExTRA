@@ -332,58 +332,10 @@ def L_hip(hip_ad,correction,par,s_hip=0):
 #     
 #        return L_hst_x+L_hst_y #return is negative loglikeli ==> max this
 
+
+
+
 def L_gaia_old(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
-
-    #Hipparchos
-    #order data
-    A3,A4,A5,A6,A7,A8,A9=gaia_ad
-    #gaia_stand=np.array(gaia_stand)
-    #calc gaia timestamps
-    t_gaia=gaia_JD(gaia_ad)
-    
-    #A8 is the abs residual
-    #A8=np.array(A8)
-    #new residual due to standard model correction:
-    
-    c_res_gaia=abs_res(A8,correction,np.zeros(5),gaia_ad)
-
-    
-
-    #print(c_res_gaia)
-    
-
-
-    
-    
-    
-
-    #Now we have the remaining residuals, where the orbital motion is still contained
-    #now we need to subtract the orbit, but in hipparcos manner
-    
-    x_sum=0
-    y_sum=0
-    for planet in par:
-            x_O,y_O=orbit(*planet,t_HIP)
-            x_sum+=x_O
-            y_sum+=y_O
-    
-    res_gaia_final=c_res_gaia-(A3*x_sum+A4*y_sum)
-    #we multiply the orbit positions with the respective hipparcos derivation and subtract them from
-    #the remaining residual
-    
-    
-    
-    
-    
-    #error of hip residual
-    A9=np.array(A9)
-    
-    
-    L_gaia=loglikelihood(res_gaia_final,A9,s_gaia)
-
-    return L_gaia
-
-def L_gaia(gaia_ad,correction,par,Sepoch=J2017(),s_gaia=0):
 
     #Hipparchos
     #order data
@@ -414,6 +366,62 @@ def L_gaia(gaia_ad,correction,par,Sepoch=J2017(),s_gaia=0):
     x_O,y_O=orbit(P,e,om,i,Om,T0,a,t_gaia)
     
     res_gaia_final=c_res_gaia-(A3*x_O+A4*y_O)
+    #we multiply the orbit positions with the respective hipparcos derivation and subtract them from
+    #the remaining residual
+    
+    
+    
+    
+    
+    #error of hip residual
+    A9=np.array(A9)
+    
+    
+    L_gaia=loglikelihood(res_gaia_final,A9,s_gaia)
+
+    return L_gaia
+
+
+def L_gaia(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
+
+    #Hipparchos
+    #order data
+    A3,A4,A5,A6,A7,A8,A9=gaia_ad
+    #gaia_stand=np.array(gaia_stand)
+    #calc gaia timestamps
+    t_gaia=gaia_JD(gaia_ad)
+    
+    #A8 is the abs residual
+    #A8=np.array(A8)
+    #new residual due to standard model correction:
+    
+    c_res_gaia=abs_res(A8,correction,np.zeros(5),gaia_ad)
+
+    
+
+    #print(c_res_gaia)
+    
+
+
+    
+    
+    
+
+    #Now we have the remaining residuals, where the orbital motion is still contained
+    #now we need to subtract the orbit, but in hipparcos manner
+    if par.shape==(7,):
+        x_sum,y_sum=orbit(*planet,t_HIP)
+
+
+    else:
+        x_sum=0
+        y_sum=0
+        for planet in par:
+                x_O,y_O=orbit(*planet,t_HIP)
+                x_sum+=x_O
+                y_sum+=y_O
+    
+    res_gaia_final=c_res_gaia-(A3*x_sum+A4*y_sum)
     #we multiply the orbit positions with the respective hipparcos derivation and subtract them from
     #the remaining residual
     
