@@ -382,7 +382,7 @@ def L_gaia_old(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
     return L_gaia
 
 
-def L_gaia(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
+def L_gaia(gaia_ad,correction,par,Sepoch=J2017(),s_gaia=0):
 
     #Hipparchos
     #order data
@@ -410,14 +410,14 @@ def L_gaia(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
     #Now we have the remaining residuals, where the orbital motion is still contained
     #now we need to subtract the orbit, but in hipparcos manner
     if par.shape==(7,):
-        x_sum,y_sum=orbit(*planet,t_HIP)
+        x_sum,y_sum=orbit(*planet,t_gaia)
 
 
     else:
         x_sum=0
         y_sum=0
         for planet in par:
-                x_O,y_O=orbit(*planet,t_HIP)
+                x_O,y_O=orbit(*planet,t_gaia)
                 x_sum+=x_O
                 y_sum+=y_O
     
@@ -514,9 +514,7 @@ def L_combined_old(RV_data,RV_err,t_RVs,#RV data
         return final
 
 
-######new
-def L_combined():
-    return
+
 
 
 
