@@ -28,3 +28,6 @@ julian_year_seconds = 365.25 * 86400.0
 
 # AU expressed in km*yr/s
 au_km_year_per_sec = au_in_meter / (julian_year_seconds * 1000.0)
+
+#astronomical unit in km yr /s
+astro_unit=4.740470464

@@ -99,6 +99,14 @@ def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
     L=loglikelihood(RV_res,err,s)
     return L
 
+###########
+#Single Stellar Model
+###########
+
+def L_sss(raw_astrometric_data):
+    
+
+    return 
 
 ###########
 ##HIP##
@@ -382,6 +390,7 @@ def L_gaia_old(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
     return L_gaia
 
 
+
 def L_gaia(gaia_ad,correction,par,Sepoch=J2017(),s_gaia=0):
 
     #Hipparchos
@@ -506,7 +515,7 @@ def L_combined_old(RV_data,RV_err,t_RVs,#RV data
     
 
         
-        Lhip=L_hip(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip)
+        Lhip=L_hip_old(hip_ad,hip_stand,gaia,correction,P,e,om,i,Om,T0,a,s_hip)
         
         final=Lrv+Lhip
         
