@@ -6,8 +6,7 @@ Provides vector astrometry functions.
 
 
 import numpy as np
-from .useful import au_mas_parsec, au_km_year_per_sec
-
+from .useful import *
 __all__ = [
     "spherical_to_cartesian",
     "cartesian_to_spherical",

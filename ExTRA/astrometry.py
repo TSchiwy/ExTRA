@@ -239,11 +239,12 @@ def sss_model(sss,t,Sepoch=2457389.0,tangential=True):
         d=p_d*parallax+mu_d*dif+d_mu_d*dif*abs(dif)+dd_mu_d*dif**3
     
     if not tangential:
-        asc=asc*(3.6e6) #convert to mas
-        dec=dec*(3.6e6) #convert to mas
+        asc_mas=asc*(3.6e6) #convert to mas
+        dec_mas=dec*(3.6e6) #convert to mas
 
-        a=a/np.cos(np.radians(dec)) +asc
-        d=d+dec
+
+        d=d+dec_mas
+        a=a/np.cos(np.radians((d/(3.6e6)))) +asc_mas
         
     
     return a,d #in mas
