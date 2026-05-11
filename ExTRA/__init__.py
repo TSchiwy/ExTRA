@@ -16,5 +16,6 @@ from .read import *
 from .likeli import *
 from .vectorastrometry import *
 from .gaia import *
+from. effects import *
 
 print("ExTRA  imported correctly")
