@@ -1,8 +1,10 @@
 import numpy as np
+import scipy.constants
 from .useful import *
+from .vectorastrometry import spherical_to_cartesian, normal_triad
 
-def mur_to_vrad(mu_r,parallax):
-    return mu_r*astro_unit/ parallax
+def mu_to_v(parallax,mu):
+    return mu*astro_unit/ parallax
 
 
 
@@ -39,5 +41,60 @@ def secular_acceleration(sss,v_r):
 
     
     return np.array([delta_par,delta_mu_asc,delta_mu_dec]) # in mas/yr , mas/yr^2 , mas/yr^2
+
+
+
+
+
+def ltd_approx(v,format="years"): #lighttimedifference
+
+    
+    if format=="years":
+        delta_t=(v*365.25*24*60*60)/lightyear  # in 1/YEARS 
+        return delta_t
+    if format=="days":
+
+        delta_t_day=(v*24*60*60)/lightyear # in 1/DAYS 
+        return delta_t_day
+
+
+
+def ltd_accurate(t,sss,v_rad,format="years"):
+
+    pc_to_km = 3.085677581e13
+    d0_pc=1000/sss[2] #distance in pc using parallax
+    d0=d0_pc*pc_to_km #distance in km
+
+    
+
+    r0_vec=spherical_to_cartesian(d0,sss[0],sss[1]) #cartesian vector to source
+    r0=np.linalg.norm(r0_vec)
+
+    
+
+    v_asc,v_dec=mu_to_v(sss[2],np.array([sss[3],sss[4]])) #mu to v using parallax
+    triad=np.array(normal_triad(sss[0],sss[1]))
+
+    if format=="years":
+        v0_vec=np.array([v_asc,v_dec,v_rad])*365.25*24*60**2 #spherical velocities in km/year
+    if format=="days":
+        v0_vec=np.array([v_asc,v_dec,v_rad])*24*60**2
+    
+    v0_cartesian=triad @ v0_vec #cartesian velocity
+
+
+
+   
+
+
+    tau=1000*(np.linalg.norm(r0_vec+v0_cartesian*t)-r0)/(scipy.constants.c) #c in kms, v in kms r0 in pc
+
+
+    return tau
+
+
+    
+
+
 
 

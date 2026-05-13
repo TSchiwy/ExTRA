@@ -35,6 +35,9 @@ astro_unit=4.740470464
 #astronomical unit in mas km yr /s
 astro_unit_z=9.777922181e8
 
+#ly
+lightyear=	9460730472580800/1000 #in km
+
 # AU expressed in km*yr/s
 au_km_year_per_sec = au_in_meter / (julian_year_seconds * 1000.0)
 

@@ -226,7 +226,8 @@ def L_hip(hip_ad,correction,par,s_hip=0):
             x_O,y_O=orbit(*planet,t_HIP)
             x_sum+=x_O
             y_sum+=y_O
-
+            
+        
 
         
         res_hip_final=abs_res(A8,correction,np.zeros(5),hip_ad)-(A3*x_sum+A4*y_sum)
