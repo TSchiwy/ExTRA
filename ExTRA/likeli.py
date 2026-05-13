@@ -220,12 +220,17 @@ def L_hip(hip_ad,correction,par,s_hip=0):
 
         #Now we have the remaining residuals, where the orbital motion is still contained
         #now we need to subtract the orbit, but in hipparcos manner
-        x_sum=0
-        y_sum=0
-        for planet in par:
-            x_O,y_O=orbit(*planet,t_HIP)
-            x_sum+=x_O
-            y_sum+=y_O
+
+        if par.shape==(7,):
+            x_sum,y_sum=orbit(*planet,t_HIP)
+
+        else:
+            x_sum=0
+            y_sum=0
+            for planet in par:
+                    x_O,y_O=orbit(*planet,t_HIP)
+                    x_sum+=x_O
+                    y_sum+=y_O
             
         
 
