@@ -221,7 +221,7 @@ def L_hip(hip_ad,correction,par,s_hip=0):
         #Now we have the remaining residuals, where the orbital motion is still contained
         #now we need to subtract the orbit, but in hipparcos manner
 
-        x_sum,y_sum=orbit(par,t_HIP) #orbit function knows if its one or N planets and will give summed up positions
+        x_sum,y_sum=orbit_total(par,t_HIP) #orbit function knows if its one or N planets and will give summed up positions
             
         
 
