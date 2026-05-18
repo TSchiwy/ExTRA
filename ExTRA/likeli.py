@@ -162,7 +162,7 @@ def L_hip_old(hip_ad,correction,P,e,om,i,Om,T0,a,s_hip=0):
 
         #Now we have the remaining residuals, where the orbital motion is still contained
         #now we need to subtract the orbit, but in hipparcos manner
-        x_O,y_O=orbit(P,e,om,i,Om,T0,a,t_HIP)
+        x_O,y_O=orbit_old(P,e,om,i,Om,T0,a,t_HIP)
         
         res_hip_final=abs_res(A8,correction,np.zeros(5),hip_ad)-(A3*x_O+A4*y_O)
         #we multiply the orbit positions with the respective hipparcos derivation and subtract them from
@@ -221,16 +221,7 @@ def L_hip(hip_ad,correction,par,s_hip=0):
         #Now we have the remaining residuals, where the orbital motion is still contained
         #now we need to subtract the orbit, but in hipparcos manner
 
-        if par.shape==(7,):
-            x_sum,y_sum=orbit(*planet,t_HIP)
-
-        else:
-            x_sum=0
-            y_sum=0
-            for planet in par:
-                    x_O,y_O=orbit(*planet,t_HIP)
-                    x_sum+=x_O
-                    y_sum+=y_O
+        x_sum,y_sum=orbit(par,t_HIP) #orbit function knows if its one or N planets and will give summed up positions
             
         
 
@@ -377,7 +368,7 @@ def L_gaia_old(gaia_ad,correction,P,e,om,i,Om,T0,a,Sepoch=J2017(),s_gaia=0):
     #Now we have the remaining residuals, where the orbital motion is still contained
     #now we need to subtract the orbit, but in hipparcos manner
     
-    x_O,y_O=orbit(P,e,om,i,Om,T0,a,t_gaia)
+    x_O,y_O=orbit_old(P,e,om,i,Om,T0,a,t_gaia)
     
     res_gaia_final=c_res_gaia-(A3*x_O+A4*y_O)
     #we multiply the orbit positions with the respective hipparcos derivation and subtract them from

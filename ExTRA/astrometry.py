@@ -59,7 +59,7 @@ def calc_E(e,M,n=30):
 
 
 
-def orbit(P,e,om,i,Om,T0,a,t):
+def orbit_old(P,e,om,i,Om,T0,a,t):
     """"Given timestamps and Keplerian Elements, computes the positions of an object in orbit"""
     
     
@@ -85,6 +85,46 @@ def orbit(P,e,om,i,Om,T0,a,t):
     
     
     return x,y
+
+
+def orbit(planet,t):
+
+        P,e,om,i,Om,T0,a=planet
+        #calculating thiele constants
+        const=thiele(a,om,Om,i)
+
+        #calculating E
+        M=2*np.pi*((t-T0)%P)/P
+        E=calc_E(e,M)
+
+        #calculating elliptical rectangular coords from E and e
+        X=np.cos(E)-e
+        Y=(1-e**2)**0.5 *np.sin(E)
+
+        #const=A,B,F,G
+        #with thiele, X,Y, we can calculate the final position x,y for a time t
+        x=const[1]*X+const[3]*Y
+        y=const[0]*X+const[2]*Y
+
+        return x,y
+
+
+
+
+
+def orbit_total(parameters,t):
+    """"Given timestamps and Keplerian Elements, computes the positions of an object in orbit
+    """
+    x_sum=0
+    y_sum=0
+    
+    for planet in parameters:
+        x,y=orbit(planet,t)
+
+        x_sum+=x
+        y_sum+=y
+    
+    return x_sum,y_sum
 
 
 
