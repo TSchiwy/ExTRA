@@ -112,18 +112,33 @@ def orbit(planet,t):
 
 
 
-def orbit_total(parameters,t):
-    """"Given timestamps and Keplerian Elements, computes the positions of an object in orbit
+def orbit_total(pars,t):
+    """"
+    Given timestamps and Keplerian Elements, computes the sum of positions of a objects in keplarian orbits.
+
+    Parameters:
+    ---------
+    pars: numpy array of either shape (7,) if one planet or (n,7) for n planets.
+    the 7 length arrays are made up of P,e,om,i,Om,T0,a in this exact order
+
+    Returns:
+    ----------
+    x_sum,y_sum: sum of positions of planets
     """
+
     x_sum=0
     y_sum=0
-    
-    for planet in parameters:
-        x,y=orbit(planet,t)
 
-        x_sum+=x
-        y_sum+=y
-    
+    if pars.shape==(7,):
+        x_sum,y_sum=orbit(pars,t)
+
+    else:    
+        for planet in pars:
+            x,y=orbit(planet,t)
+
+            x_sum+=x
+            y_sum+=y
+
     return x_sum,y_sum
 
 
