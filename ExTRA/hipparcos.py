@@ -35,14 +35,17 @@ def abs_res(old_res,parameter_fit,parameter,derivation):
     
 
 
-def hip_JD(hip_ad,Sepoch=None): #finds JD of measurement
-    if Sepoch==None:
-        Sepoch=J1991()
+def hip_JD(hip_ad,Sepoch=J1991(),format="jd"): #finds JD of measurement
     A3,A4,A5,A6,A7,A8,A9=hip_ad
     frac=A7/A4
     epoch=frac+1991.25
-    JD=Sepoch+(epoch-1991.25)*365.25 #JD for standard epoch J1991
-    return JD
+    if format=="jd":
+        JD=Sepoch+(epoch-1991.25)*365.25 #JD for standard epoch J1991
+        return JD
+    if format=="jyear":
+        return epoch
+    if format=="relative":
+        return frac
 
 
 def scanangle(hip_ad): #finds the scanangle between EAST and RGC(reference great circle) in radians
