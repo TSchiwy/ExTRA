@@ -329,10 +329,12 @@ def pos_recalc(standmodel,Epoch0,Epoch1):
     
     
     asc=asc*(3.6e6) #convert to mas
-    dec=dec*(3.6e6) #convert to mas
+    
 
 
     a=asc+mu_a_star*((Epoch1-Epoch0)/365.25)*1/np.cos(np.radians(dec))
+
+    dec=dec*(3.6e6) #convert to mas
     d=dec+mu_d*((Epoch1-Epoch0)/365.25)
         
     
