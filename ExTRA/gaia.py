@@ -89,7 +89,7 @@ def res_to_orbit_gaia(residuals,gaia_ad,orbitfit):
     hip_y_err=res_2D[3]
 
     #print(res_2D)
-    orb_x,orb_y=orbit(orbitfit,t)
+    orb_x,orb_y=orbit_total(orbitfit,t)
 
     res_orb_x=hip_x+orb_x
     res_orb_y=hip_y+orb_y

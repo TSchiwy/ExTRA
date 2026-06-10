@@ -82,6 +82,8 @@ def hip_with_gaia(hip_ad,hip_stand,gaia_stand,gaia_standardepoch="2017.5"):
 
 
 
+
+
 ##############################################
 
 
@@ -259,7 +261,7 @@ def hip_residuals(hip_ad,hip_stand,stand_fit,orbit_fit,Sepoch):
  
         #Now we have the remaining residuals, where the orbit will be fit too.
         #To do that, we need to correct the hip residuals again, this time for an orbit:
-        x_O,y_O=orbit(orbit_fit[0],orbit_fit[1],orbit_fit[2],orbit_fit[3],orbit_fit[4],orbit_fit[5],orbit_fit[6],t_HIP)
+        x_O,y_O=orbit_total(orbit_fit,t_HIP)
         
         residuals_hip=c_res_hip-(A3*x_O+A4*y_O)
 
@@ -289,7 +291,7 @@ def res_to_orbit(residuals,hip_ad,orbitfit):
     hip_y_err=res_2D[3]
 
     #print(res_2D)
-    orb_x,orb_y=orbit(orbitfit,t)
+    orb_x,orb_y=orbit_total(orbitfit,t)
 
     res_orb_x=hip_x+orb_x
     res_orb_y=hip_y+orb_y
