@@ -1,5 +1,7 @@
 
 import numpy as np
+from astropy.table import Table
+import pandas as pd
 from .hipparcos import hip_JD
 
 
@@ -37,6 +39,72 @@ def RV_order(RV_data):
 ################
 
 #Reading out HIP data:
+def hip_data(location,hip_id,format=""):
+    
+    
+    if hip_id[:3]=="HIP":
+        number=hip_id[3:]
+    else:
+        number=hip_id
+    
+
+    if len(number)==6:
+        id_full="H"+str(number)
+    if len(number)==5:
+        id_full="H0"+str(number)
+    if len(number)==4:
+        id_full="H00"+str(number)
+    if len(number)==3:
+        id_full="H000"+str(number)
+    if len(number)==2:
+        id_full="H0000"+str(number)
+    if len(number)==1:
+        id_full="H00000"+str(number)
+
+
+
+
+    destination=location+id_full[:4]+"/"+id_full+".d"
+
+
+
+
+    cols = ["IORB", "EPOCH", "PARF", "CPSI", "SPSI", "RES", "SRES"]
+
+    if format=="pandas":
+        df = pd.read_csv(
+        destination,
+        comment="#",
+        sep='\s+',
+        names=cols)
+
+    else:
+        df = Table.read(
+        destination,
+        format="csv",
+        comment="#",
+        delimiter=" ",
+        names=cols)
+
+    
+
+    header_lines = []
+
+    with open(destination) as f:
+        for line in f:
+            if line.startswith("#"):
+                header_lines.append(line.strip())
+            else:
+                break  # stop when actual data starts
+
+        header=[]
+        for line in header_lines[5:-2]:
+            line=line.split()[1:]
+            header.append(line)
+
+
+    return df,header
+
 
 def hip_read(path):
     """Returns HIP astrometric data and time for hip measurements in a array"""
