@@ -3,6 +3,15 @@ import matplotlib.pyplot as plt
 from .astrometry import *
 from .useful import *
 
+__all__ = [
+    "abs_res", "hip_JD", "scanangle", "hip_with_gaia", "rotation_counterclockwise",
+    "hip_2d", "plot_hip", "plot_hip_err", "hip_measurement", "hip_residuals",
+    "res_to_orbit", "hipparcos_covariance"
+]
+
+
+
+
 #This function calculates the new abscissa residual if you change a parameter compared to the hipparchos solution.
 #For example if parallax_hipparchos=40mas , parallax_model=10mas, you will get a parameter_residual=-30mas.
 #This is done for all the standard model parameters.
@@ -300,4 +309,55 @@ def res_to_orbit(residuals,hip_ad,orbitfit):
 
 
     
-    
+def hipparcos_covariance(errors, parallax=None, vrad=0.0, vrad_error=None):
+    """Construct a Hipparcos covariance matrix from standard errors.
+
+    Parameters
+    ----------
+    errors : array_like, shape (5,)
+        Standard errors ``(sigma_alpha, sigma_delta, sigma_parallax,
+        sigma_mu_alpha, sigma_mu_delta)`` in the same units as the SSS.
+    parallax : float, optional
+        Source parallax in mas. Required when ``vrad_error`` is provided.
+    vrad : float, optional
+        Adopted radial velocity in km/s. Defaults to zero.
+    vrad_error : float, optional
+        Radial-velocity uncertainty in km/s. If provided, return a 6x6
+        covariance including radial velocity.
+
+    Returns
+    -------
+    ndarray
+        A 5x5 diagonal covariance matrix, or a 6x6 covariance matrix with
+        radial velocity as the sixth parameter.
+
+    Notes
+    -----
+    This approximation assumes zero correlations. The official Hipparcos
+    covariance requires the 15 upper-weight-matrix values. The 6x6 extension
+    follows the generalized radial-velocity prescription.
+    """
+    errors = np.asarray(errors, dtype=float)
+    if errors.shape != (5,) or np.any(errors <= 0):
+        raise ValueError("errors must contain five positive values")
+    covariance = np.diag(errors**2)
+    if vrad_error is None:
+        return covariance
+    if parallax is None:
+        raise ValueError("parallax is required when vrad_error is provided")
+    if vrad_error < 0:
+        raise ValueError("vrad_error must be a non-negative value")
+
+    if covariance.shape != (5, 5):
+        raise ValueError("covariance must have shape (5, 5)")
+
+    result = np.zeros((6, 6), dtype=float)
+    result[:5, :5] = covariance
+    scale = au_km_year_per_sec
+    result[:5, 5] = result[5, :5] = (vrad / scale) * covariance[:5, 2]
+    result[5, 5] = (
+        (vrad / scale) ** 2 * covariance[2, 2]
+        + (parallax / scale) ** 2 * vrad_error**2
+        + (vrad_error / scale) ** 2 * covariance[2, 2]
+    )
+    return result

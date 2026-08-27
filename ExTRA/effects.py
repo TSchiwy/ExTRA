@@ -6,6 +6,11 @@ from .gaia import gaia_JD
 from .useful import *
 from .vectorastrometry import spherical_to_cartesian, normal_triad, EpochPropagation, cartesian_to_spherical
 
+__all__ = [
+    "mu_to_v", "secular_zech", "secular_lindegren", "secular_acceleration", "secular_shift",
+    "ltd_approx", "ltd_accurate", "consistent_models", "secular_correction", "propagate_v"
+]
+
 def mu_to_v(parallax,mu):
     return mu*astro_unit/ parallax
 

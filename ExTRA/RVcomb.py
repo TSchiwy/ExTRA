@@ -1,5 +1,7 @@
 from .RVsolo import *
 
+__all__ = ["RV_comb", "K", "TfromM", "alpha_max"]
+
 #the RV model, just with i and a as new parameters instead of K, so its consistent with the orbital model
 def RV_comb(v0,P,e,om,i,T0,a,parallax,t):
     

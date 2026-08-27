@@ -6,6 +6,11 @@ from .astrometry import *
 from .useful import *
 from .gaia import *
 
+__all__ = [
+    "loglikelihood", "L_RVs", "L_RVs_comb", "L_sss", "L_hip_old", "L_hip",
+    "L_gaia_old", "L_gaia", "L_combined_old"
+]
+
 
 
 

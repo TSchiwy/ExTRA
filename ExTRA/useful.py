@@ -1,5 +1,12 @@
 import numpy as np
 from astropy.table import Table
+
+__all__ = [
+    "J1991", "J2016", "J2017", "jitter_estimate", "mas_to_deg", "calc_a",
+    "signature", "astropy_to_numpy", "mas_to_rad", "pc_in_km", "au_in_meter",
+    "au_mas_parsec", "julian_year_seconds", "astro_unit", "astro_unit_z",
+    "lightyear", "au_km_year_per_sec", "c_0"
+]
 #for cases like Hipparchos its J1991.25, or 2448349.0625JD
 #for gaia it is J2016, or 2456389.0
 def J1991():

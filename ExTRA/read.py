@@ -4,6 +4,8 @@ from astropy.table import Table
 import pandas as pd
 from .hipparcos import hip_JD
 
+__all__ = ["RV_read", "RV_order", "hip_data", "hip_read"]
+
 
 #reading out RV data
 

@@ -1,8 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from astropy.time import Time
+
 from .astrometry import *
 from .hipparcos import *
 from .useful import *
+
+__all__ = ["angle_trafo", "gaia_init", "gaia_JD", "res_to_orbit_gaia", "decode_gaia_flag", "decode_transit_proc_flags"]
 
 #### Psi=pi/2 - theta #psi=HIP2 theta=GAIADR4
 
@@ -47,9 +50,6 @@ def gaia_init(data,standardepoch="2017.5"):
 
 
     return transformed,t_gaia
-
-
-from astropy.time import Time
 
 def gaia_JD(gaia_ad,format="jd",Sepoch=None):
     if Sepoch==None:
