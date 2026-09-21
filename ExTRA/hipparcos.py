@@ -6,7 +6,7 @@ from .useful import *
 __all__ = [
     "abs_res", "hip_JD", "scanangle", "hip_with_gaia", "rotation_counterclockwise",
     "hip_2d", "plot_hip", "plot_hip_err", "hip_measurement", "hip_residuals",
-    "res_to_orbit", "hipparcos_covariance"
+    "res_to_orbit", "hipparcos_covariance","hip_reconstruct_covariance"
 ]
 
 
@@ -361,3 +361,44 @@ def hipparcos_covariance(errors, parallax=None, vrad=0.0, vrad_error=None):
         + (vrad_error / scale) ** 2 * covariance[2, 2]
     )
     return result
+
+
+def hip_reconstruct_covariance(IAD,plx=0,vrad=0.0,vrad_error=0):  
+
+    cpsi,spsi,parf,A6,A7,res,sres=IAD
+    epoch=hip_JD(IAD,format="relative")
+    w = 1.0 / sres**2
+
+    # design matrix: [Δα*, Δδ, Δϖ, μα*, μδ]
+    A = np.column_stack([
+        spsi,
+        cpsi,
+        parf,
+        epoch * spsi,
+        epoch * cpsi,
+    ])
+
+    N = A.T @ (A * w[:, None])          # 5x5 normal matrix
+    b = A.T @ (w * res)
+    C = np.linalg.inv(N)
+    x_hat = C @ b                        # small correction to the ref. solution
+
+    resid = res - A @ x_hat
+    Q = np.sum(w * resid**2)
+    nu = len(res) - 5
+    u = np.sqrt(Q / nu)
+
+    C_corr = C * u**2 if u > 1 else C   # excess-noise rescale, Michalik+15 eq. B.7
+
+
+    result = np.zeros((6, 6), dtype=float)
+    result[:5, :5] = C_corr
+    scale = au_km_year_per_sec
+    result[:5, 5] = result[5, :5] = (vrad / scale) * C_corr[:5, 2]
+    result[5, 5] = (
+        (vrad / scale) ** 2 * C_corr[2, 2]
+        + (plx / scale) ** 2 * vrad_error**2
+        + (vrad_error / scale) ** 2 * C_corr[2, 2]
+    )
+
+    return result, u, nu

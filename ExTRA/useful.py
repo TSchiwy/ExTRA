@@ -20,6 +20,7 @@ def J2017(): #this is J2017.5 as in gaia dr4
 
 
 
+
 def jitter_estimate(residuals,err):
     s=np.mean(abs((residuals**2 -err**2 ))**0.5)
     return s
@@ -41,6 +42,25 @@ def signature(M_s,M_p,a_p,par):
 
     return s
 
+def a_star_to_planet():
+    return
+
+def a_planet_to_star(P,e,i,a,par):
+    K = (
+    2 * np.pi
+    * a
+    * 1.495978707e11
+    * np.sin(i)
+    / (P * 86400 * np.sqrt(1 - e**2))
+)
+    a_star_AU = (
+    K * P * 86400 * np.sqrt(1 - e**2)
+    / (2 * np.pi * np.sin(i))
+    / 1.495978707e11
+)
+
+    a_star_mas = a_star_AU * parallax
+    return a_star_mas
 def astropy_to_numpy(table):
 
     arr = np.vstack([table[col] for col in table.colnames])

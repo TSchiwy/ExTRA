@@ -4,7 +4,7 @@ from astropy.table import Table
 import pandas as pd
 from .hipparcos import hip_JD
 
-__all__ = ["RV_read", "RV_order", "hip_data", "hip_read"]
+__all__ = ["RV_read", "RV_order", "hip_data", "hip_read","hip_init"]
 
 
 #reading out RV data
@@ -106,6 +106,20 @@ def hip_data(location,hip_id,format=""):
 
 
     return df,header
+
+
+def hip_init(table_raw,timeformat="jd"):
+    """Returns HIP astrometric data and time for hip measurements in a array"""
+    number,HIP_epochs,A_5,A_3,A_4,A_8,A_9=table_raw #A3=cos--x , #A4=sin ---y
+    A_6=A_3*(HIP_epochs)
+    A_7=A_4*(HIP_epochs)
+
+
+    hip_ad=np.array([A_3,A_4,A_5,A_6,A_7,A_8,A_9])
+
+    t_HIP=hip_JD(hip_ad,format=timeformat)
+
+    return hip_ad,t_HIP
 
 
 def hip_read(path):

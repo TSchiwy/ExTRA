@@ -8,7 +8,7 @@ components, matching :func:`ExTRA.vectorastrometry.normal_triad`.
 import numpy as np
 
 from .vectorastrometry import cartesian_to_spherical, normal_triad
-from .useful import au_km_year_per_sec
+from .useful import au_km_year_per_sec,pc_in_km,julian_year_seconds
 
 __all__ = [
 	"sss_to_smok",
@@ -145,6 +145,12 @@ parallax_c : float
 	p_star, q_star, _ = normal_triad(alpha, delta)
 	rad_to_mas = 180 * 3600 * 1000 / np.pi
 
+	distance_c_km = pc_in_km * 1000.0 / parallax_c
+	#rv in kms
+	radial_velocity = (
+		np.dot(unit_position, motion) * distance_c_km / julian_year_seconds
+	)  
+
 	if angles_in_degrees:
 		alpha, delta = np.degrees([alpha, delta])
 
@@ -154,6 +160,7 @@ parallax_c : float
 		parallax_c / position_length,
 		rad_to_mas * np.dot(p_star, motion) / position_length,
 		rad_to_mas * np.dot(q_star, motion) / position_length,
+		radial_velocity
 	])
 def smok_coordinates(vector, alpha_c, delta_c):
 	"""Project scaled Cartesian vectors onto a SMOK normal triad.

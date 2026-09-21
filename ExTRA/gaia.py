@@ -33,8 +33,11 @@ def gaia_init(data,standardepoch="2017.5"):
 
     GAIA_EPOCH=Time(standardepoch, format='jyear',scale="tcb")
 
+    
+
     relative_time=Time(data[0], format='jd', scale='tcb').jyear-GAIA_EPOCH.jyear
     gaia_angle=angle_trafo(np.radians(data[4]))
+    #gaia_angle=angle_trafo(data[4])
 
     t_gaia=data[0] #gets returned seperatly, not important for fitting
     
