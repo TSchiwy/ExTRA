@@ -5,7 +5,7 @@ __all__ = [
     "J1991", "J2016", "J2017", "jitter_estimate", "mas_to_deg", "calc_a",
     "signature", "astropy_to_numpy", "mas_to_rad", "pc_in_km", "au_in_meter",
     "au_mas_parsec", "julian_year_seconds", "astro_unit", "astro_unit_z",
-    "lightyear", "au_km_year_per_sec", "c_0"
+    "lightyear", "au_km_year_per_sec", "c_0","angular_distance"
 ]
 #for cases like Hipparchos its J1991.25, or 2448349.0625JD
 #for gaia it is J2016, or 2456389.0
@@ -42,29 +42,25 @@ def signature(M_s,M_p,a_p,par):
 
     return s
 
-def a_star_to_planet():
-    return
 
-def a_planet_to_star(P,e,i,a,par):
-    K = (
-    2 * np.pi
-    * a
-    * 1.495978707e11
-    * np.sin(i)
-    / (P * 86400 * np.sqrt(1 - e**2))
-)
-    a_star_AU = (
-    K * P * 86400 * np.sqrt(1 - e**2)
-    / (2 * np.pi * np.sin(i))
-    / 1.495978707e11
-)
 
-    a_star_mas = a_star_AU * parallax
-    return a_star_mas
 def astropy_to_numpy(table):
 
     arr = np.vstack([table[col] for col in table.colnames])
     return arr
+
+
+def angular_distance(alpha1, delta1, alpha2, delta2):
+	dalpha = alpha2 - alpha1
+	numerator = np.sqrt(
+		(np.cos(delta2) * np.sin(dalpha))**2
+		+ (np.cos(delta1) * np.sin(delta2) - np.sin(delta1) * np.cos(delta2) * np.cos(dalpha))**2
+	)
+	denominator = (
+		np.sin(delta1) * np.sin(delta2)
+		+ np.cos(delta1) * np.cos(delta2) * np.cos(dalpha)
+	)
+	return np.arctan2(numerator, denominator)
 
 
 

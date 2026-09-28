@@ -17,6 +17,7 @@ __all__ = [
 	"smok_coordinates",
 	"smok_vector",
 	"change_comparison_point",
+	"propagate_smok_to_spherical"
 ]
 
 
@@ -218,3 +219,80 @@ def change_comparison_point(a, d, r, alpha_c, delta_c, new_alpha_c, new_delta_c)
 	"""
 	vector = smok_vector(a, d, r, alpha_c, delta_c)
 	return smok_coordinates(vector, new_alpha_c, new_delta_c)
+
+
+def sss_new_comparison_point(
+	a, d, r, adot, ddot, rdot,
+	alpha_c, delta_c, parallax_c,
+	new_alpha_c, new_delta_c,
+):
+	"""Full standard-parameter solution at a new comparison point, given a
+	SMOK state defined relative to the old one. All angles in radians.
+	"""
+	a2, d2, r2 = change_comparison_point(a, d, r, alpha_c, delta_c, new_alpha_c, new_delta_c)
+	adot2, ddot2, rdot2 = change_comparison_point(
+		adot, ddot, rdot, alpha_c, delta_c, new_alpha_c, new_delta_c
+	)
+	return smok_to_sss(
+		a2, d2, r2, adot2, ddot2, rdot2,
+		new_alpha_c, new_delta_c, parallax_c,
+		angles_in_degrees=False,
+	)
+
+def propagate_smok_to_spherical(
+	a, d, r, adot, ddot, rdot,
+	alpha_c, delta_c, parallax_c,
+	tau, angles_in_degrees=True,
+):
+	"""Propagate a SMOK state to one or more epochs and return sky position.
+
+	Parameters
+	----------
+	a, d, r, adot, ddot, rdot : float
+		SMOK position and velocity, relative to (alpha_c, delta_c).
+	alpha_c, delta_c : float
+		Comparison-point coordinates (degrees if angles_in_degrees, else
+		radians).
+	parallax_c : float
+		Parallax in mas defining the SMOK scale.
+	tau : float or array_like
+		Propagation interval(s), in Julian years.
+
+	Returns
+	-------
+	ndarray
+		Shape (2,) if tau is scalar, or (2, N) if tau has N elements:
+		(alpha, delta) at each epoch. Degrees by default.
+	"""
+	if angles_in_degrees:
+		alpha_c_rad, delta_c_rad = np.radians([alpha_c, delta_c])
+	else:
+		alpha_c_rad, delta_c_rad = alpha_c, delta_c
+
+	tau = np.atleast_1d(np.asarray(tau, dtype=float))
+
+	p_c, q_c, r_c = normal_triad(alpha_c_rad, delta_c_rad)
+
+	# Propagated SMOK coordinates, shape (N,) each
+	a_p = a + adot * tau
+	d_p = d + ddot * tau
+	r_p = r + rdot * tau
+
+	# Position vectors, shape (3, N)
+	position = (
+		a_p[np.newaxis, :] * p_c[:, np.newaxis]
+		+ d_p[np.newaxis, :] * q_c[:, np.newaxis]
+		+ r_p[np.newaxis, :] * r_c[:, np.newaxis]
+	)
+
+	position_length = np.linalg.norm(position, axis=0)
+	unit_position = position / position_length
+
+	_, alpha, delta = cartesian_to_spherical(*unit_position)
+	parallax = parallax_c / position_length
+
+	if angles_in_degrees:
+		alpha, delta = np.degrees([alpha, delta])
+
+	result = np.array([alpha, delta,parallax])
+	return result[:, 0] if result.shape[1] == 1 and np.isscalar(tau) else result
