@@ -17,7 +17,9 @@ __all__ = [
 	"smok_coordinates",
 	"smok_vector",
 	"change_comparison_point",
-	"propagate_smok_to_spherical"
+	"propagate_smok_to_spherical",
+	"change_comparison_point_6par",
+	"smok_at_new_comparison_point"
 ]
 
 
@@ -220,24 +222,78 @@ def change_comparison_point(a, d, r, alpha_c, delta_c, new_alpha_c, new_delta_c)
 	vector = smok_vector(a, d, r, alpha_c, delta_c)
 	return smok_coordinates(vector, new_alpha_c, new_delta_c)
 
-
-def sss_new_comparison_point(
+def change_comparison_point_6par(
 	a, d, r, adot, ddot, rdot,
-	alpha_c, delta_c, parallax_c,
-	new_alpha_c, new_delta_c,
+	alpha_c, delta_c, new_alpha_c, new_delta_c,
 ):
-	"""Full standard-parameter solution at a new comparison point, given a
-	SMOK state defined relative to the old one. All angles in radians.
+	"""Express a full SMOK state (position + velocity) relative to a new
+	comparison point.
+
+	All comparison-point angles must be in radians. This changes only the
+	coordinate representation, not the underlying scaled vectors.
+
+	Returns
+	-------
+	ndarray
+		(a, d, r, adot, ddot, rdot) in the new comparison-point frame.
 	"""
 	a2, d2, r2 = change_comparison_point(a, d, r, alpha_c, delta_c, new_alpha_c, new_delta_c)
 	adot2, ddot2, rdot2 = change_comparison_point(
 		adot, ddot, rdot, alpha_c, delta_c, new_alpha_c, new_delta_c
 	)
+	return np.array([a2, d2, r2, adot2, ddot2, rdot2])
+
+def smok_at_new_comparison_point(
+	a, d, r, adot, ddot, rdot,
+	alpha_c, delta_c, parallax_c,
+	new_alpha_c, new_delta_c,
+	angles_in_degrees=True,
+):
+	"""Re-express a SMOK state at a new comparison point, and return the
+	standard astrometric parameters there.
+
+	Parameters
+	----------
+	a, d, r, adot, ddot, rdot : float
+		SMOK state relative to the old comparison point (alpha_c, delta_c).
+	alpha_c, delta_c : float
+		Old comparison-point coordinates.
+	parallax_c : float
+		Parallax in mas defining the SMOK scale (unchanged by a comparison-
+		point switch, since it's a pure rotation of the same vector).
+	new_alpha_c, new_delta_c : float
+		New comparison-point coordinates, same angle convention as
+		alpha_c/delta_c (degrees if angles_in_degrees, else radians).
+	angles_in_degrees : bool
+		If True, all angle inputs/outputs are degrees; internally converted
+		to radians for the rotation.
+
+	Returns
+	-------
+	ndarray
+		(alpha, delta, parallax, mu_alpha_star, mu_delta, v_r) at the star's
+		propagated/rotated position, expressed relative to the new
+		comparison point. Angles in degrees by default, v_r in m/s.
+	"""
+	if angles_in_degrees:
+		alpha_c_rad, delta_c_rad, new_alpha_c_rad, new_delta_c_rad = np.radians(
+			[alpha_c, delta_c, new_alpha_c, new_delta_c]
+		)
+	else:
+		alpha_c_rad, delta_c_rad = alpha_c, delta_c
+		new_alpha_c_rad, new_delta_c_rad = new_alpha_c, new_delta_c
+
+	a2, d2, r2, adot2, ddot2, rdot2 = change_comparison_point_6par(
+		a, d, r, adot, ddot, rdot,
+		alpha_c_rad, delta_c_rad, new_alpha_c_rad, new_delta_c_rad,
+	)
+
 	return smok_to_sss(
 		a2, d2, r2, adot2, ddot2, rdot2,
-		new_alpha_c, new_delta_c, parallax_c,
-		angles_in_degrees=False,
+		new_alpha_c_rad, new_delta_c_rad, parallax_c,
+		angles_in_degrees=False,  # already converted above
 	)
+
 
 def propagate_smok_to_spherical(
 	a, d, r, adot, ddot, rdot,
@@ -261,9 +317,11 @@ def propagate_smok_to_spherical(
 	Returns
 	-------
 	ndarray
-		Shape (2,) if tau is scalar, or (2, N) if tau has N elements:
-		(alpha, delta) at each epoch. Degrees by default.
+		Shape (3,) if tau is scalar, or (3, N) if tau has N elements:
+		(alpha, delta, parallax) at each epoch. Degrees by default.
 	"""
+	scalar_input = np.isscalar(tau) or np.ndim(tau) == 0
+
 	if angles_in_degrees:
 		alpha_c_rad, delta_c_rad = np.radians([alpha_c, delta_c])
 	else:
@@ -273,12 +331,10 @@ def propagate_smok_to_spherical(
 
 	p_c, q_c, r_c = normal_triad(alpha_c_rad, delta_c_rad)
 
-	# Propagated SMOK coordinates, shape (N,) each
 	a_p = a + adot * tau
 	d_p = d + ddot * tau
 	r_p = r + rdot * tau
 
-	# Position vectors, shape (3, N)
 	position = (
 		a_p[np.newaxis, :] * p_c[:, np.newaxis]
 		+ d_p[np.newaxis, :] * q_c[:, np.newaxis]
@@ -294,5 +350,5 @@ def propagate_smok_to_spherical(
 	if angles_in_degrees:
 		alpha, delta = np.degrees([alpha, delta])
 
-	result = np.array([alpha, delta,parallax])
-	return result[:, 0] if result.shape[1] == 1 and np.isscalar(tau) else result
+	result = np.array([alpha, delta, parallax])
+	return result[:, 0] if scalar_input else result

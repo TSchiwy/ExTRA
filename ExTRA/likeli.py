@@ -79,7 +79,7 @@ def L_RVs(t,data, err, s, v0, K, P, e, om, T0):
     return L
 
 
-def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
+def L_RVs_comb(t,data,err,s,v0,planet,parallax):
     """
     Calculates the loglikelihood of RV data when combined with astrometry
         
@@ -98,8 +98,9 @@ def L_RVs_comb(t,data,err,s,v0,P,e,om,i,T0,a,parallax):
     L : float
         The summed loglikelihood  *-1 -----> needs to be minimized
      """
+    P,e,om,i,Om,T0,a=planet
 
-    v_mod=RV_comb(v0,P,e,om,i,T0,a,parallax,t)
+    v_mod=RV_comb(v0,planet,parallax,t)
     RV_res=data-v_mod
     L=loglikelihood(RV_res,err,s)
     return L
