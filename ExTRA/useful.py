@@ -37,8 +37,8 @@ def calc_a(M_s,P):
 
 def signature(M_s,M_p,a_p,par):
     """M_s"""
-    
-    s=M_p/M_s *a_p *(par/1000)
+    MJUP_MSUN = 9.5479e-4
+    s=M_p/M_s *a_p *par *MJUP_MSUN
 
     return s
 
@@ -46,7 +46,7 @@ def signature(M_s,M_p,a_p,par):
 
 def astropy_to_numpy(table):
 
-    arr = np.vstack([table[col] for col in table.colnames])
+    arr = np.vstack([table[col] for col in table.colnames]).astype(np.float64)
     return arr
 
 

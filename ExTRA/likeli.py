@@ -99,9 +99,11 @@ def L_RVs_comb(t,data,err,s,v0,planet,parallax):
         The summed loglikelihood  *-1 -----> needs to be minimized
      """
     P,e,om,i,Om,T0,a=planet
+    
 
     v_mod=RV_comb(v0,planet,parallax,t)
     RV_res=data-v_mod
+    #print(RV_res)
     L=loglikelihood(RV_res,err,s)
     return L
 

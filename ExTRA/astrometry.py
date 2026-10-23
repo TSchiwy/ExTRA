@@ -370,7 +370,8 @@ def secondary_mass(M_prime,parallax,P,e,i,a,unit="jup"):
     print("K:")
     print(K)
     #print((2*np.pi*G)*(M_s**2))
-    M_s=((K**3) *(P*24*60**2)/(2*np.pi*G*np.sin(i)**3)*(M_prime**2))**(1/3)
+    M_p=M_prime*M_sun
+    M_s=((K**3) *(P*24*60**2)/(2*np.pi*G*np.sin(i)**3)*(M_p**2))**(1/3)
 
     if unit=="jup":
         return M_s/M_jup
