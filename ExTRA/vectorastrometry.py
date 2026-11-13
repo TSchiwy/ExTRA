@@ -389,7 +389,7 @@ def v_to_mu(v_r, parallax):
 
 
 
-def propagate_lpc(sss,v_rad,c_point,timestamps,Sepoch=J2017()):
+def propagate_lpc(sss,c_point,timestamps,v_rad=0,Sepoch=J2017()):
 
         #A3,A4,A5,A6,A7,A8,A9=IAD
         
