@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from astropy.time import Time
 from .astrometry import *
 from .useful import *
 

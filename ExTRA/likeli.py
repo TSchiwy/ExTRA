@@ -5,6 +5,7 @@ from .hipparcos import *
 from .astrometry import *
 from .useful import *
 from .gaia import *
+from .vectorastrometry import *
 
 __all__ = [
     "loglikelihood", "L_RVs", "L_RVs_comb", "L_sss", "L_hip_old", "L_hip",
@@ -79,7 +80,7 @@ def L_RVs(t,data, err, s, v0, K, P, e, om, T0):
     return L
 
 
-def L_RVs_comb(t,data,err,s,v0,planet,parallax):
+def L_RVs_comb(t,data,err,s,v0,planet):
     """
     Calculates the loglikelihood of RV data when combined with astrometry
         
@@ -101,7 +102,7 @@ def L_RVs_comb(t,data,err,s,v0,planet,parallax):
     P,e,om,i,Om,T0,a=planet
     
 
-    v_mod=RV_comb(v0,planet,parallax,t)
+    v_mod=RV_comb(v0,planet,t)
     RV_res=data-v_mod
     #print(RV_res)
     L=loglikelihood(RV_res,err,s)
@@ -422,6 +423,33 @@ def L_gaia(gaia_ad,correction,par,Sepoch=J2017(),s_gaia=0):
 
 
 
+#def L_rigorous(par,correction,IAD,Sepoch=J2017(),s=0,instrument=None)
+#    
+#    A3,A4,A5,A6,A7,A8,A9=IAD
+#    
+#    
+#    #new residual due to standard model correction:
+#    propagator=EpochPropagation()
+#    pos_t=propagator.propagate_pos
+#    c_res=
+#
+#
+#
+#
+#
+#
+#    t_gaia=gaia_JD(gaia_ad)
+#    x_sum,y_sum=orbit_total(par,t_gaia)
+#    res_gaia_final=c_res_gaia-(A3*x_sum+A4*y_sum)
+#    #we multiply the orbit positions with the respective hipparcos derivation and subtract them from
+#    #the remaining residual
+#    #error of hip residual
+#    A9=np.array(A9)
+#    L_gaia=loglikelihood(res_gaia_final,A9,s_gaia)
+#    return L_gaia
+
+
+
 def L_combined_old(RV_data,RV_err,t_RVs,#RV data
                hip_ad,hip_stand, #HIP data
                gaia,
@@ -495,6 +523,36 @@ def L_combined_old(RV_data,RV_err,t_RVs,#RV data
         
 
         return final
+
+def L_rigorous(par_mas,correction,v_rad,iad,dr3_sss,Sepoch=ex.J2017(),s=0,instrument=None):
+    
+    #print(iad)
+    A3,A4,A5,A6,A7,A8,A9=iad
+    dr3_lpc=np.concatenate([[correction[0],correction[1]],dr3_sss[2:]+correction[2:]])
+    cpo=(dr3_sss[0],dr3_sss[1])
+    #timestamps from data
+    t_JD=gaia_JD(iad,format="jd")
+    prop=propagate_lpc(dr3_lpc,v_rad,cpo,t_JD,Sepoch=Sepoch)
+    al_res=A8-prop[0]*A3-prop[1]*A4-prop[2]*A5
+   
+
+    
+    
+
+
+    
+    x_sum,y_sum=ex.orbit_total(par_mas,t_JD)
+    res_final=al_res-(A3*x_sum+A4*y_sum)
+
+
+    
+    
+    #error
+    A9=np.array(A9)
+
+    L_gaia=ex.loglikelihood(res_final,A9,s)
+
+    return L_gaia
 
 
 

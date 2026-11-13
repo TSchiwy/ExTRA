@@ -14,7 +14,10 @@ __all__ = [
     "elementary_rotation_matrix",
     "phase_space_to_astrometry",
     "astrometry_to_phase_space",
-    "EpochPropagation"
+    "EpochPropagation",
+    "propagate_lpc",
+    "time_factor",
+    "v_to_mu",
 ]
 
 
@@ -327,7 +330,109 @@ def astrometry_to_phase_space(phi, theta, parallax, muphistar, mutheta, vrad):
     return x, y, z, vx, vy, vz
 
 
+def gnomonic_projection(phi,theta,phi_ref,theta_ref):
+    """
+    Projects spherical coordinate position of a source into the local plane of a reference point.
+    """
+    p0, q0, r0 = normal_triad(phi_ref, theta_ref)
 
+    _,_,u=spherical_to_cartesian(phi,theta)
+
+    # LPC projection
+    denom = np.sum(r0[:, None] * u, axis=0)
+
+    xi = np.sum(p0[:, None] * u, axis=0) / denom
+    eta = np.sum(q0[:, None] * u, axis=0) / denom
+
+    xi_mas = xi / self.mastorad
+    eta_mas = eta / self.mastorad
+
+    return xi_mas,eta_mas
+
+def time_factor(parallax, musqr, mu_r, t):
+
+
+    mas_to_rad = np.pi / (180 * 3600 * 1000)
+    pc_to_au = 206264.80621425
+    seconds_per_year = 365.25*24*60*60
+
+    tau_A = 499.004784
+    
+    # Light travel time to the star in seconds
+    tau = tau_A * pc_to_au * 1000 / parallax
+
+    # Convert proper motions to mas/day
+    mu_r = mu_r / seconds_per_year *mas_to_rad
+    musqr = musqr / seconds_per_year**2 *mas_to_rad**2
+
+    
+
+    Z = np.sqrt(
+        1
+        + (musqr+mu_r**2)*t**2
+        + 2*t*(tau*musqr+mu_r)
+    )
+    
+
+    f_t = (t + 2*tau) / (
+        t + tau*(1 + Z - mu_r*t)
+    )
+
+
+    return f_t
+
+def v_to_mu(v_r, parallax):
+    A = 4.74047  # km/s
+
+    return parallax * v_r / (A)
+
+
+
+
+def propagate_lpc(sss,v_rad,c_point,timestamps,Sepoch=J2017()):
+
+        #A3,A4,A5,A6,A7,A8,A9=IAD
+        
+        #a,d are offsets in mas to c_point
+        a,d,parallax,muphistar,mutheta=sss
+
+        phi,theta=np.radians(c_point)
+
+        mastorad = np.pi / (180 * 3600 * 1000)
+
+        t = (np.atleast_1d(timestamps) - Sepoch) /365.25
+
+        p0, q0, r0 = normal_triad(phi, theta)
+
+        pmra0 = muphistar * mastorad
+        pmdec0 = mutheta * mastorad
+        pmr0 = v_rad * parallax / au_km_year_per_sec * mastorad
+        pmtot0sqr = (muphistar**2 + mutheta**2) * mastorad**2
+        pmvec0 = pmra0 * p0 + pmdec0 * q0
+
+        f_t=time_factor(parallax,pmtot0sqr,pmr0,t)
+
+
+        u = (
+            r0[:, None] * (1 + pmr0 * t)
+            + pmvec0[:, None] * t
+        ) 
+
+        norm = np.linalg.norm(u, axis=0)
+
+        
+        par=parallax/norm
+        
+
+        denom = np.sum(r0[:, None] * u, axis=0)
+
+        xi = np.sum(p0[:, None] * u, axis=0) / denom
+        eta = np.sum(q0[:, None] * u, axis=0) / denom
+
+        xi_mas =  a+xi / mastorad 
+        eta_mas =  d+eta / mastorad
+
+        return xi_mas, eta_mas , par
 
 class EpochPropagation:
     """
@@ -349,6 +454,10 @@ class EpochPropagation:
         Class constructor/initializer.
         """
         self.mastorad = np.pi / (180 * 3600 * 1000)
+    
+
+    
+
 
     def propagate_astrometry(
         self, phi, theta, parallax, muphistar, mutheta, vrad, t0, t1

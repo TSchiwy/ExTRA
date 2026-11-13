@@ -18,7 +18,7 @@ def thiele(a,omega,Omega,i):
     """Thiele Innes Constants"""
     
     
-    #omega=omega+np.pi
+    
     
     A=a*(np.cos(omega)*np.cos(Omega)-np.sin(omega)*np.sin(Omega)*np.cos(i)) 
     B=a*(np.cos(omega)*np.sin(Omega)+np.sin(omega)*np.cos(Omega)*np.cos(i)) 
@@ -96,7 +96,7 @@ def orbit(planet,t):
 
         P,e,om,i,Om,T0,a=planet
         #calculating thiele constants
-        const=thiele(a,om,Om,i)
+        A,B,F,G=thiele(a,om,Om,i)
 
         #calculating E
         M=2*np.pi*((t-T0)%P)/P
@@ -108,10 +108,10 @@ def orbit(planet,t):
 
         #const=A,B,F,G
         #with thiele, X,Y, we can calculate the final position x,y for a time t
-        x=const[1]*X+const[3]*Y
-        y=const[0]*X+const[2]*Y
+        x=A*X+F*Y
+        y=B*X+G*Y
 
-        return x,y
+        return y,x
 
 
 
