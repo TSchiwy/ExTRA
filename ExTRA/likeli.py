@@ -524,7 +524,7 @@ def L_combined_old(RV_data,RV_err,t_RVs,#RV data
 
         return final
 
-def L_rigorous(par_mas,correction,v_rad,iad,dr3_sss,Sepoch=ex.J2017(),s=0,instrument=None):
+def L_rigorous(par_mas,correction,v_rad,iad,dr3_sss,Sepoch=J2017(),s=0,instrument=None):
     
     #print(iad)
     A3,A4,A5,A6,A7,A8,A9=iad
@@ -541,7 +541,7 @@ def L_rigorous(par_mas,correction,v_rad,iad,dr3_sss,Sepoch=ex.J2017(),s=0,instru
 
 
     
-    x_sum,y_sum=ex.orbit_total(par_mas,t_JD)
+    x_sum,y_sum=orbit_total(par_mas,t_JD)
     res_final=al_res-(A3*x_sum+A4*y_sum)
 
 
@@ -550,7 +550,7 @@ def L_rigorous(par_mas,correction,v_rad,iad,dr3_sss,Sepoch=ex.J2017(),s=0,instru
     #error
     A9=np.array(A9)
 
-    L_gaia=ex.loglikelihood(res_final,A9,s)
+    L_gaia=loglikelihood(res_final,A9,s)
 
     return L_gaia
 

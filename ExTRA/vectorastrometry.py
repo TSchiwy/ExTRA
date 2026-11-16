@@ -334,6 +334,7 @@ def gnomonic_projection(phi,theta,phi_ref,theta_ref):
     """
     Projects spherical coordinate position of a source into the local plane of a reference point.
     """
+    mas_to_rad = np.pi / (180 * 3600 * 1000)
     p0, q0, r0 = normal_triad(phi_ref, theta_ref)
 
     _,_,u=spherical_to_cartesian(phi,theta)
@@ -344,8 +345,8 @@ def gnomonic_projection(phi,theta,phi_ref,theta_ref):
     xi = np.sum(p0[:, None] * u, axis=0) / denom
     eta = np.sum(q0[:, None] * u, axis=0) / denom
 
-    xi_mas = xi / self.mastorad
-    eta_mas = eta / self.mastorad
+    xi_mas = xi / mas_to_rad
+    eta_mas = eta / mas_to_rad
 
     return xi_mas,eta_mas
 
@@ -398,11 +399,13 @@ def propagate_lpc(sss,c_point,timestamps,v_rad=0,Sepoch=J2017()):
 
         phi,theta=np.radians(c_point)
 
-        mastorad = np.pi / (180 * 3600 * 1000)
+        
 
         t = (np.atleast_1d(timestamps) - Sepoch) /365.25
 
         p0, q0, r0 = normal_triad(phi, theta)
+
+        mastorad = np.pi / (180 * 3600 * 1000)
 
         pmra0 = muphistar * mastorad
         pmdec0 = mutheta * mastorad
@@ -414,8 +417,8 @@ def propagate_lpc(sss,c_point,timestamps,v_rad=0,Sepoch=J2017()):
 
 
         u = (
-            r0[:, None] * (1 + pmr0 * t)
-            + pmvec0[:, None] * t
+            r0[:, None] * (1 + pmr0 * t*f_t)
+            + pmvec0[:, None] * t*f_t
         ) 
 
         norm = np.linalg.norm(u, axis=0)
@@ -433,6 +436,8 @@ def propagate_lpc(sss,c_point,timestamps,v_rad=0,Sepoch=J2017()):
         eta_mas =  d+eta / mastorad
 
         return xi_mas, eta_mas , par
+
+
 
 class EpochPropagation:
     """
