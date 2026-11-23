@@ -8,12 +8,13 @@ from .gaia import *
 from .vectorastrometry import *
 
 __all__ = [
-    "loglikelihood", "L_RVs", "L_RVs_comb", "L_sss", "L_hip_old", "L_hip",
+    "chi_squared","loglikelihood", "L_RVs", "L_RVs_comb", "L_sss", "L_hip_old", "L_hip",
     "L_gaia_old", "L_gaia", "L_combined_old"
 ]
 
 
-
+def chi_squared(res, err, s):
+    return np.sum(res**2 / (err**2 + s**2))
 
 def loglikelihood(res,err,s): #s=jitter
     '''
@@ -33,9 +34,9 @@ def loglikelihood(res,err,s): #s=jitter
     
     #term 2 and term 3 are summation
     
-    term_2=-0.5*sum(np.log(err**2 +s**2))
+    term_2=-0.5*np.sum(np.log(err**2 +s**2))
     #residual function from before just calculates the diff between model and obs
-    term_3=-0.5*sum((res**2) /(err**2 +s**2))
+    term_3=-0.5*np.sum((res**2) /(err**2 +s**2))
         
         
     ln_L=term_1+(term_2+term_3)

@@ -14,5 +14,6 @@ from .vectorastrometry import *
 from .gaia import *
 from .smok import *
 from .effects import *
+from .bin import *
 
 print("ExTRA  imported correctly")

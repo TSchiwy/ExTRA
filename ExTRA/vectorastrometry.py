@@ -18,6 +18,8 @@ __all__ = [
     "propagate_lpc",
     "time_factor",
     "v_to_mu",
+    "gaia_lpc_to_hip_lpc",
+
 ]
 
 
@@ -350,35 +352,32 @@ def gnomonic_projection(phi,theta,phi_ref,theta_ref):
 
     return xi_mas,eta_mas
 
+
+
 def time_factor(parallax, musqr, mu_r, t):
-
-
-    mas_to_rad = np.pi / (180 * 3600 * 1000)
+    """
+    parallax : mas
+    musqr    : tangential proper motion squared, rad^2/yr^2  (pmtot0sqr in propagate_lpc)
+    mu_r     : radial proper motion, rad/yr                  (pmr0 in propagate_lpc)
+    t        : years from the reference epoch
+    """
     pc_to_au = 206264.80621425
-    seconds_per_year = 365.25*24*60*60
+    seconds_per_year = 365.25 * 24 * 60 * 60
 
-    tau_A = 499.004784
-    
-    # Light travel time to the star in seconds
-    tau = tau_A * pc_to_au * 1000 / parallax
+    tau_A = 499.004784   # light travel time for 1 AU [s]
 
-    # Convert proper motions to mas/day
-    mu_r = mu_r / seconds_per_year *mas_to_rad
-    musqr = musqr / seconds_per_year**2 *mas_to_rad**2
-
-    
+    # Light travel time to the star in years
+    tau = tau_A * pc_to_au * 1000 / parallax / seconds_per_year
 
     Z = np.sqrt(
         1
-        + (musqr+mu_r**2)*t**2
-        + 2*t*(tau*musqr+mu_r)
-    )
-    
-
-    f_t = (t + 2*tau) / (
-        t + tau*(1 + Z - mu_r*t)
+        + (musqr + mu_r**2) * t**2
+        + 2 * t * (tau * musqr + mu_r)
     )
 
+    f_t = (t + 2 * tau) / (
+        t + tau * (1 + Z - mu_r * t)
+    )
 
     return f_t
 
@@ -435,8 +434,36 @@ def propagate_lpc(sss,c_point,timestamps,v_rad=0,Sepoch=J2017()):
         xi_mas =  a+xi / mastorad 
         eta_mas =  d+eta / mastorad
 
-        return xi_mas, eta_mas , par
+        new_t=f_t*t*365.25+Sepoch
+        return xi_mas, eta_mas , par, new_t
 
+
+def gaia_lpc_to_hip_lpc(xi_mas, eta_mas, c_point_gaia, c_point_hip):
+    """Transforms local plane coordinates of Gaia into local plane coordinates in HIP"""
+    mas_to_rad = np.pi / (180 * 3600 * 1000)
+
+    #cpos
+    phi_g, theta_g = np.radians(c_point_gaia)
+    phi_h, theta_h = np.radians(c_point_hip)
+
+    #gaia triad
+    pG, qG, rG = normal_triad(phi_g, theta_g)
+    #hip triad
+    pH, qH, rH = normal_triad(phi_h,theta_h)
+
+    #gaia lpc
+    xi  = np.atleast_1d(xi_mas)  * mas_to_rad
+    eta = np.atleast_1d(eta_mas) * mas_to_rad
+
+    #u of propagated position
+    u = rG[:, None] + pG[:, None] * xi + qG[:, None] * eta
+
+    denom = np.sum(rH[:, None] * u, axis=0)
+
+    xi_h = np.sum(pH[:, None] * u, axis=0) / denom /mas_to_rad
+    eta_h = np.sum(qH[:, None] * u, axis=0) / denom /mas_to_rad
+
+    return  xi_h,eta_h
 
 
 class EpochPropagation:
