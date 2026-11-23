@@ -417,21 +417,21 @@ def hip_residuals(planet_fit,sss_fit,hip_iad,hip_sss,cpo,dr4_lpc,v_r=0):
     #timestamps from data
 
 
-    t_hip_jd=ex.hip_JD(hip_iad,format="jd")
-    xi_g,eta_g,plx_g,t_ltd=ex.propagate_lpc(sss_lpc,cpo,t_hip_jd,v_rad=v_r)
+    t_hip_jd=hip_JD(hip_iad,format="jd")
+    xi_g,eta_g,plx_g,t_ltd=propagate_lpc(sss_lpc,cpo,t_hip_jd,v_rad=v_r)
 
     alpha=planet_fit[-1]*(dr4_lpc[2])
     par_star=np.copy(planet_fit)
     par_star[-1]=alpha
 
-    x_sum,y_sum=ex.orbit_total(par_star,t_ltd)
+    x_sum,y_sum=orbit_total(par_star,t_ltd)
 
     cpo_hip=hip_sss[:2]
-    xi_h,eta_h=ex.gaia_lpc_to_hip_lpc(xi_g+x_sum, eta_g+y_sum ,cpo, hip_sss[:2])
+    xi_h,eta_h=gaia_lpc_to_hip_lpc(xi_g+x_sum, eta_g+y_sum ,cpo, hip_sss[:2])
 
 
     #print(xi_h,eta_h)
 
     res_final_h=A8_h-(A3_h*xi_h+A4_h*eta_h)-plx_g*A5_h
 
-    return t_ltd,res_final_h,ex.res_to_orbit(res_final_h,hip_iad, par_star)
+    return t_ltd,res_final_h,res_to_orbit(res_final_h,hip_iad, par_star)
