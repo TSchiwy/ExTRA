@@ -525,7 +525,7 @@ def L_combined_old(RV_data,RV_err,t_RVs,#RV data
 
         return final
 
-def L_hip_rigorous(planet_mas,sss_corr,iad_hip,sss_hip,cpo_gaia,sss_gaia,Sepoch=ex.J2017(),v_rad=0,s=0):    
+def L_hip_rigorous(planet_mas,sss_corr,iad_hip,sss_hip,cpo_gaia,sss_gaia,Sepoch=J2017(),v_rad=0,s=0):    
     
     A3,A4,A5,A6,A7,A8,A9=hip_iad
 
@@ -537,14 +537,14 @@ def L_hip_rigorous(planet_mas,sss_corr,iad_hip,sss_hip,cpo_gaia,sss_gaia,Sepoch=
     #timestamps from data
 
     
-    t_JD=ex.hip_JD(hip_iad,format="jd")
+    t_JD=hip_JD(hip_iad,format="jd")
 
     
-    xi_g,eta_g,plx_g,t_ltd=ex.propagate_lpc(sss_lpc,cpo_gaia,t_JD,v_rad=v_rad,Sepoch=Sepoch)
-    x_sum,y_sum=ex.orbit_total(planet_mas,t_ltd)
+    xi_g,eta_g,plx_g,t_ltd=propagate_lpc(sss_lpc,cpo_gaia,t_JD,v_rad=v_rad,Sepoch=Sepoch)
+    x_sum,y_sum=orbit_total(planet_mas,t_ltd)
 
     cpo_hip=hip_sss[:2]
-    xi_h,eta_h=ex.gaia_lpc_to_hip_lpc(xi_g+x_sum, eta_g+y_sum ,cpo_gaia, cpo_hip)
+    xi_h,eta_h=gaia_lpc_to_hip_lpc(xi_g+x_sum, eta_g+y_sum ,cpo_gaia, cpo_hip)
 
     #print(xi_h,eta_h)
     
@@ -558,14 +558,14 @@ def L_hip_rigorous(planet_mas,sss_corr,iad_hip,sss_hip,cpo_gaia,sss_gaia,Sepoch=
     #error
     A9=np.array(A9)
 
-    L_hip=ex.loglikelihood(res_final,A9,s)
+    L_hip=loglikelihood(res_final,A9,s)
     
     #print(L_hip)
 
     return L_hip
 
 
-def L_gaia_rigorous(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=ex.J2017(),v_rad=0,s=0):    
+def L_gaia_rigorous(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=J2017(),v_rad=0,s=0):    
 
     #print(len(gaia_iad))
     
@@ -577,12 +577,12 @@ def L_gaia_rigorous(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=ex.J20
     #timestamps from data
 
     
-    t_JD=ex.gaia_JD(gaia_iad,format="jd")
+    t_JD=gaia_JD(gaia_iad,format="jd")
 
 
-    xi_g,eta_g,plx_g,t_ltd=ex.propagate_lpc(sss_lpc,cpo_gaia,t_JD,v_rad=v_rad,Sepoch=Sepoch)
+    xi_g,eta_g,plx_g,t_ltd=propagate_lpc(sss_lpc,cpo_gaia,t_JD,v_rad=v_rad,Sepoch=Sepoch)
     
-    x_sum,y_sum=ex.orbit_total(planet_mas,t_ltd)
+    x_sum,y_sum=orbit_total(planet_mas,t_ltd)
 
     
     
@@ -593,7 +593,7 @@ def L_gaia_rigorous(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=ex.J20
     #error
     A9=np.array(A9)
 
-    L_gaia=ex.loglikelihood(res_final,A9,s)
+    L_gaia=loglikelihood(res_final,A9,s)
 
     return L_gaia
 
