@@ -4,6 +4,7 @@ from astropy.time import Time
 from .astrometry import *
 from .hipparcos import *
 from .useful import *
+from .vectorastrometry import *
 
 __all__ = ["angle_trafo", "gaia_init", "gaia_JD", "res_to_orbit_gaia", "decode_gaia_flag", "decode_transit_proc_flags","gres","gaia_residuals"]
 
@@ -243,7 +244,7 @@ def decode_transit_proc_flags(value):
     }
 
 
-def gres(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=ex.J2017(),v_rad=0,s=0):    
+def gres(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=J2017(),v_rad=0,s=0):    
 
    
     
@@ -255,12 +256,12 @@ def gres(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=ex.J2017(),v_rad=
     #timestamps from data
 
     
-    t_JD=ex.gaia_JD(gaia_iad,format="jd")
+    t_JD=gaia_JD(gaia_iad,format="jd")
 
 
-    xi_g,eta_g,plx_g,t_ltd=ex.propagate_lpc(sss_lpc,cpo_gaia,t_JD,v_rad=v_rad,Sepoch=Sepoch)
+    xi_g,eta_g,plx_g,t_ltd=propagate_lpc(sss_lpc,cpo_gaia,t_JD,v_rad=v_rad,Sepoch=Sepoch)
     
-    x_sum,y_sum=ex.orbit_total(planet_mas,t_ltd)
+    x_sum,y_sum=orbit_total(planet_mas,t_ltd)
 
     
     
@@ -273,7 +274,7 @@ def gres(planet_mas,sss_corr,gaia_iad,cpo_gaia,sss_gaia,Sepoch=ex.J2017(),v_rad=
    
     A9=np.array(A9)
     
-    return t_ltd,res_final,ex.res_to_orbit_gaia(res_final,gaia_iad, planet_mas)
+    return t_ltd,res_final,res_to_orbit_gaia(res_final,gaia_iad, planet_mas)
 
 def gaia_residuals(theta,gaia,hip,RVs,v_rad=0):
     n_offsets=int(-1*len(RVs))
